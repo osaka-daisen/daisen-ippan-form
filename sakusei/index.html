@@ -394,12 +394,23 @@
             <label class="f"><span class="lab">契約締結日</span><input id="teiketsu_bi" type="date"></label>
             <label class="f full"><span class="lab">廃棄物の種類</span>
               <input id="k_shurui" value="事業系一般廃棄物（可燃ごみ）"></label>
+            <div class="full btnrow" style="margin-top:-2px">
+              <button type="button" class="mini shurui-p"
+                data-v="事業系一般廃棄物（可燃ごみ）">可燃のみ</button>
+              <button type="button" class="mini shurui-p"
+                data-v="事業系一般廃棄物（可燃ごみ）／古紙（専ら再生利用の目的となるもの）">＋古紙</button>
+              <button type="button" class="mini shurui-p"
+                data-v="事業系一般廃棄物（可燃ごみ）／古紙・あきびん・あきかん（専ら再生利用の目的となるもの）">＋古紙・びん缶</button>
+              <button type="button" class="mini shurui-p"
+                data-v="一般廃棄物（可燃ごみ・資源ごみ）">マンション</button>
+            </div>
             <label class="f full"><span class="lab">収集頻度</span>
               <input id="k_hindo" value="週6回（月曜日〜土曜日）"></label>
           </div>
           <div class="hint">
             収集時間帯は 24:00〜8:00（日曜朝・1/1〜1/4は休止）で固定です。<br>
-            廃プラ・金属くず・ガラスくずは業種を問わず産業廃棄物です。不燃系を回収する場合は
+            <b>古紙・あきびん・あきかん</b>は専ら再生利用の目的となる廃棄物（専ら物）なので、この契約に書けます。<br>
+            <b>ペットボトル・廃プラ・金属くず・ガラスくず</b>は産業廃棄物です。回収する場合は
             この契約に含めず、別途の産業廃棄物契約でお願いします（第1条3）。
           </div>
         </fieldset>
@@ -794,6 +805,9 @@ function setKeiyakuSize(size){
 }
 document.querySelectorAll('.docbtn').forEach(b =>
   b.addEventListener('click', () => setDoc(b.dataset.doc)));
+/* 廃棄物の種類のよく使う書き方をワンタップで入れる */
+document.querySelectorAll('.shurui-p').forEach(b =>
+  b.addEventListener('click', () => { $('k_shurui').value = b.dataset.v; render(); }));
 document.querySelectorAll('#keiyakuSizes .sizebtn').forEach(b =>
   b.addEventListener('click', () => setKeiyakuSize(b.dataset.size)));
 
