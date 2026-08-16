@@ -71,6 +71,8 @@
     border:1px solid var(--line); border-radius:7px; background:#fff; cursor:pointer}
   .checks label:has(input:checked){background:var(--chip); border-color:var(--accent); font-weight:700; color:var(--accent-d)}
   .checks input{width:auto; margin:0; flex:none; accent-color:var(--accent)}
+  .checks.days{grid-template-columns:repeat(7,minmax(0,1fr)); gap:4px}
+  .checks.days label{justify-content:center; padding:7px 2px}
 
   .btnrow{display:flex; flex-wrap:wrap; gap:8px}
   button{font:inherit; font-size:13px; cursor:pointer; border:1px solid var(--line);
@@ -406,11 +408,20 @@
             </div>
             <label class="f full"><span class="lab">収集頻度</span>
               <input id="k_hindo" value="週6回（月曜日〜土曜日）"></label>
-            <div class="full btnrow" style="margin-top:-2px">
-              <button type="button" class="mini hindo-p" data-v="週6回（月曜日〜土曜日）">週6回</button>
-              <button type="button" class="mini hindo-p" data-v="週7回（毎日）">毎日</button>
-              <button type="button" class="mini hindo-p" data-v="週3回（月曜日・水曜日・金曜日）">週3回</button>
-              <button type="button" class="mini hindo-p" data-v="週2回（火曜日・金曜日）">週2回</button>
+            <div class="full" style="margin-top:-2px">
+              <div class="checks days" id="hindoDays">
+                <label><input type="checkbox" value="月" checked>月</label>
+                <label><input type="checkbox" value="火" checked>火</label>
+                <label><input type="checkbox" value="水" checked>水</label>
+                <label><input type="checkbox" value="木" checked>木</label>
+                <label><input type="checkbox" value="金" checked>金</label>
+                <label><input type="checkbox" value="土" checked>土</label>
+                <label><input type="checkbox" value="日">日</label>
+              </div>
+              <div class="btnrow" style="margin-top:6px">
+                <button type="button" class="mini" id="btnAllDays">毎日</button>
+                <button type="button" class="mini" id="btnWeekdays">月〜土</button>
+              </div>
             </div>
             <label class="f full"><span class="lab">収集時間帯</span>
               <input id="k_jikan" value="23:00〜9:00"></label>
@@ -918,7 +929,40 @@ function setKeiyakuSize(size){
 document.querySelectorAll('.docbtn').forEach(b =>
   b.addEventListener('click', () => setDoc(b.dataset.doc)));
 /* 廃棄物の種類のよく使う書き方をワンタップで入れる */
-[['.shurui-p','k_shurui'], ['.hindo-p','k_hindo'],
+/* 選んだ曜日から「週6回（月曜日〜土曜日）」のような文言を作る */
+const DAYS = ['月','火','水','木','金','土','日'];
+function buildHindo(){
+  const boxes = [...document.querySelectorAll('#hindoDays input')];
+  const on = boxes.map(function(b){ return b.checked; });
+  const picked = DAYS.filter(function(d,i){ return on[i]; });
+  if(picked.length === 0){ $('k_hindo').value = ''; render(); return; }
+  if(picked.length === 7){
+    $('k_hindo').value  = '毎日（1月1日〜1月4日を除く）';
+    $('k_kyushi').value = '1/1〜1/4';
+    render(); return;
+  }
+  // 連続していれば「月曜日〜土曜日」、飛んでいれば「火曜日・金曜日」
+  const idx = DAYS.map(function(d,i){ return i; }).filter(function(i){ return on[i]; });
+  const renzoku = idx.length >= 3 && idx[idx.length-1] - idx[0] === idx.length - 1;
+  const naka = renzoku
+    ? DAYS[idx[0]] + '曜日〜' + DAYS[idx[idx.length-1]] + '曜日'
+    : picked.map(function(d){ return d + '曜日'; }).join('・');
+  $('k_hindo').value  = '週' + picked.length + '回（' + naka + '）';
+  $('k_kyushi').value = on[6] ? '1/1〜1/4' : '日曜朝・1/1〜1/4';
+  render();
+}
+document.querySelectorAll('#hindoDays input').forEach(function(b){
+  b.addEventListener('change', buildHindo); });
+$('btnAllDays').addEventListener('click', function(){
+  document.querySelectorAll('#hindoDays input').forEach(function(b){ b.checked = true; });
+  buildHindo();
+});
+$('btnWeekdays').addEventListener('click', function(){
+  document.querySelectorAll('#hindoDays input').forEach(function(b,i){ b.checked = i < 6; });
+  buildHindo();
+});
+
+[['.shurui-p','k_shurui'],
  ['.jikan-p','k_jikan'],   ['.kyushi-p','k_kyushi']].forEach(function(pair){
   document.querySelectorAll(pair[0]).forEach(function(b){
     b.addEventListener('click', function(){ $(pair[1]).value = b.dataset.v; render(); });
@@ -929,7 +973,10 @@ document.querySelectorAll('#keiyakuSizes .sizebtn').forEach(b =>
 
 /* --- 保存・復元 --- */
 function save(){
-  const o = { _gomi: [...document.querySelectorAll('#gomiChecks input')].map(b=>b.checked) };
+  const o = {
+    _gomi: [...document.querySelectorAll('#gomiChecks input')].map(b=>b.checked),
+    _days: [...document.querySelectorAll('#hindoDays input')].map(b=>b.checked)
+  };
   INPUTS.forEach(id => o[id] = v(id));
   try{ localStorage.setItem(STORE, JSON.stringify(o)); }catch(e){}
 }
@@ -940,6 +987,11 @@ function restore(){
   if(Array.isArray(o._gomi)){
     [...document.querySelectorAll('#gomiChecks input')].forEach((b,i)=>{
       if(o._gomi[i]!=null) b.checked = o._gomi[i];
+    });
+  }
+  if(Array.isArray(o._days)){
+    [...document.querySelectorAll('#hindoDays input')].forEach((b,i)=>{
+      if(o._days[i]!=null) b.checked = o._days[i];
     });
   }
 }
