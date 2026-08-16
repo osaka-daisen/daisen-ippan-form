@@ -406,9 +406,31 @@
             </div>
             <label class="f full"><span class="lab">収集頻度</span>
               <input id="k_hindo" value="週6回（月曜日〜土曜日）"></label>
+            <div class="full btnrow" style="margin-top:-2px">
+              <button type="button" class="mini hindo-p" data-v="週6回（月曜日〜土曜日）">週6回</button>
+              <button type="button" class="mini hindo-p" data-v="週7回（毎日）">毎日</button>
+              <button type="button" class="mini hindo-p" data-v="週3回（月曜日・水曜日・金曜日）">週3回</button>
+              <button type="button" class="mini hindo-p" data-v="週2回（火曜日・金曜日）">週2回</button>
+            </div>
+            <label class="f full"><span class="lab">収集時間帯</span>
+              <input id="k_jikan" value="24:00〜8:00"></label>
+            <div class="full btnrow" style="margin-top:-2px">
+              <button type="button" class="mini jikan-p" data-v="24:00〜8:00">深夜〜早朝</button>
+              <button type="button" class="mini jikan-p" data-v="8:00〜17:00">日中</button>
+              <button type="button" class="mini jikan-p" data-v="17:00〜22:00">夕方〜夜</button>
+              <button type="button" class="mini jikan-p" data-v="乙の収集ルートに応じた時間帯">ルート次第</button>
+            </div>
+            <label class="f full"><span class="lab">収集休止日</span>
+              <input id="k_kyushi" value="日曜朝・1/1〜1/4"></label>
+            <div class="full btnrow" style="margin-top:-2px">
+              <button type="button" class="mini kyushi-p" data-v="日曜朝・1/1〜1/4">日曜朝と年始</button>
+              <button type="button" class="mini kyushi-p" data-v="1/1〜1/4">年始のみ（日曜も収集）</button>
+              <button type="button" class="mini kyushi-p" data-v="なし（年中無休）">なし</button>
+            </div>
           </div>
           <div class="hint">
-            収集時間帯は 24:00〜8:00（日曜朝・1/1〜1/4は休止）で固定です。<br>
+            収集頻度・時間帯・休止日は契約書の表に載り、第2条でその表が優先すると定めています。
+            現場ごとに書き換えてください。<br>
             <b>古紙・あきびん・あきかん</b>は専ら再生利用の目的となる廃棄物（専ら物）なので、この契約に書けます。<br>
             <b>ペットボトル・廃プラ・金属くず・ガラスくず</b>は産業廃棄物です。回収する場合は
             この契約に含めず、別途の産業廃棄物契約でお願いします（第1条3）。
@@ -539,7 +561,8 @@
               <tr><th>管理担当者</th><td class="fillc" id="c_tanto"></td></tr>
               <tr><th>廃棄物の種類</th><td id="c_shurui"></td></tr>
               <tr><th>収集頻度</th><td id="c_hindo"></td></tr>
-              <tr><th>収集時間帯</th><td>24:00〜8:00（日曜朝・1/1〜1/4は休止）</td></tr>
+              <tr><th>収集時間帯</th><td id="c_jikan"></td></tr>
+              <tr><th>収集休止日</th><td id="c_kyushi"></td></tr>
               <tr><th>月額料金（税別）</th><td class="fillc" id="c_gaku"></td></tr>
               <tr><th>支払方法</th><td class="fillc" id="c_pay"></td></tr>
               <tr><th>契約開始日</th><td class="fillc" id="c_start"></td></tr>
@@ -588,7 +611,7 @@ const CUST = ['h_name','h_addr','h_tel','daihyo','j_name','j_bldg','j_addr','j_t
               'j_tanto','kaishi','shiharai','s_name','s_addr','s_tel','keiri','keiri_tel',
               's_mail','tanto_name','tanto_yaku','tanto_tel','tanto_mail','biko'];
 /* 大泉衛生が入れる項目 */
-const OWN  = ['shurui_other','keiyaku_start','teiketsu_bi','k_shurui','k_hindo',
+const OWN  = ['shurui_other','keiyaku_start','teiketsu_bi','k_shurui','k_hindo','k_jikan','k_kyushi',
               'tokui_no','genba_no','keiyaku_tanto','gyoshu_no','kubun','kubun_other','s_bldg',
               'keiyaku_gaku','zei','shime','shime_hi','shiharai_tsuki','shiharai_hi',
               'shiharai_hi2','shiharai_hoho','furikomi','moushikomi','kaishi_made','shukin',
@@ -746,9 +769,9 @@ function arts(mansion){
   return [
     ['第1条（委託業務）', a1],
     ['第2条（収集場所・頻度）', [
-      '収集場所・収集日時・収集頻度は、本契約書「収集条件」欄のとおりとする。',
-      '変更が生じた場合、甲は速やかに乙に通知する。',
-      '収集時間帯は24:00〜8:00とする。但し日曜朝、1/1〜1/4は収集を行わない。']],
+      '収集場所・収集日時・収集頻度・収集時間帯及び収集休止日は、本契約書「収集条件」欄のとおりとする。',
+      '変更が生じた場合、甲は速やかに乙に通知し、甲乙協議のうえ変更する。',
+      '天候・交通事情・車両の不具合その他やむを得ない事由により、収集時間が前後し、又は収集日を変更する場合がある。この場合、乙は甲に速やかに連絡する。']],
     ['第3条（料金・支払）', [
       '委託料金は本契約書「料金」欄のとおり（税別）。',
       '乙は毎月末日締めで請求書を発行する。支払方法は本契約書「支払方法」欄のとおりとし、口座振替の場合は翌月22日に甲の指定口座から引き落とすものとする。銀行振込の場合は翌月末日までに乙の指定口座へ振込むものとし、振込手数料は甲負担とする。',
@@ -824,6 +847,8 @@ function renderKeiyaku(){
   txt('c_tanto', v('j_tanto'));
   txt('c_shurui', v('k_shurui'));
   txt('c_hindo',  v('k_hindo'));
+  txt('c_jikan',  v('k_jikan'));
+  txt('c_kyushi', v('k_kyushi'), 'なし');
   cell('c_gaku', v('keiyaku_gaku')
     ? esc(Number(String(v('keiyaku_gaku')).replace(/[^\d]/g,'') || 0).toLocaleString('ja-JP')) + '　円（税別）'
     : '');
@@ -893,8 +918,12 @@ function setKeiyakuSize(size){
 document.querySelectorAll('.docbtn').forEach(b =>
   b.addEventListener('click', () => setDoc(b.dataset.doc)));
 /* 廃棄物の種類のよく使う書き方をワンタップで入れる */
-document.querySelectorAll('.shurui-p').forEach(b =>
-  b.addEventListener('click', () => { $('k_shurui').value = b.dataset.v; render(); }));
+[['.shurui-p','k_shurui'], ['.hindo-p','k_hindo'],
+ ['.jikan-p','k_jikan'],   ['.kyushi-p','k_kyushi']].forEach(function(pair){
+  document.querySelectorAll(pair[0]).forEach(function(b){
+    b.addEventListener('click', function(){ $(pair[1]).value = b.dataset.v; render(); });
+  });
+});
 document.querySelectorAll('#keiyakuSizes .sizebtn').forEach(b =>
   b.addEventListener('click', () => setKeiyakuSize(b.dataset.size)));
 
