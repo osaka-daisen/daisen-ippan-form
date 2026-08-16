@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="theme-color" content="#1f6f5c">
+<title>事業系ごみ 定期回収のお申込み｜大泉衛生株式会社</title>
+<style>
+  :root{
+    --ink:#1a1a1a; --sub:#5b6470; --line:#d9dee5; --line2:#eef1f5;
+    --bg:#f4f6f9; --card:#ffffff; --accent:#1f6f5c; --accent-d:#155445;
+    --warn:#b4451f; --chip:#eef4f2;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",system-ui,sans-serif;
+    font-size:15px; line-height:1.7; -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:18px 18px 80px}
+
+  header.app{
+    display:flex; align-items:center; gap:14px;
+    padding:16px 18px; background:var(--card); border:1px solid var(--line);
+    border-radius:12px; margin-bottom:14px;
+  }
+  header.app .logo{
+    width:46px; height:46px; border-radius:10px; background:var(--accent);
+    color:#fff; display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:20px; flex:none;
+  }
+  header.app h1{font-size:17px; margin:0; letter-spacing:.02em; line-height:1.4}
+  header.app .sub{font-size:12px; color:var(--sub); margin-top:3px}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:12px; margin-bottom:14px; overflow:hidden}
+  .card > .chead{
+    padding:12px 18px; border-bottom:1px solid var(--line2);
+    font-weight:700; font-size:14px; color:#fff; background:var(--accent);
+  }
+  .card > .chead .n{
+    display:inline-flex; width:22px; height:22px; border-radius:50%;
+    background:rgba(255,255,255,.22); align-items:center; justify-content:center;
+    font-size:12px; margin-right:8px;
+  }
+  .card .cbody{padding:16px 18px}
+
+  .lead{font-size:14px; color:var(--sub)}
+  .lead strong{color:var(--ink)}
+  .steps{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 0; padding:0; list-style:none; font-size:13px}
+  .steps li{
+    flex:1 1 150px; background:var(--chip); border:1px solid #cfe3dc; color:var(--accent-d);
+    border-radius:8px; padding:9px 11px;
+  }
+  .steps li b{display:block; font-size:11px; letter-spacing:.08em; opacity:.75}
+
+  .field{margin-bottom:18px}
+  .field:last-child{margin-bottom:4px}
+  .field .lab{display:block; font-weight:700; font-size:14px; margin-bottom:2px}
+  .field .req,.field .opt{
+    font-size:11px; font-weight:700; border-radius:4px; padding:1px 6px; margin-left:7px; vertical-align:2px;
+  }
+  .field .req{background:#fdecea; color:var(--warn); border:1px solid #f3c7be}
+  .field .opt{background:#eef1f5; color:var(--sub); border:1px solid var(--line)}
+  .field .guide{
+    font-size:12.5px; color:var(--sub); margin:4px 0 7px; padding-left:11px;
+    border-left:3px solid #cfe3dc; white-space:pre-line;
+  }
+  .field .guide .ex{color:var(--accent-d)}
+  input,select,textarea{
+    width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:8px;
+    font:inherit; color:var(--ink); background:#fff;
+  }
+  input:focus,select:focus,textarea:focus{outline:2px solid #bfe0d6; border-color:var(--accent)}
+  textarea{resize:vertical; min-height:74px}
+  input.bad,select.bad,textarea.bad{border-color:var(--warn); background:#fffafa}
+  .err{color:var(--warn); font-size:12.5px; font-weight:700; margin-top:5px; display:none}
+  .err.show{display:block}
+
+  .checks{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:7px}
+  .checks label{
+    display:flex; align-items:center; gap:7px; padding:9px 11px; font-size:13.5px;
+    border:1px solid var(--line); border-radius:8px; background:#fff; cursor:pointer;
+  }
+  .checks label:has(input:checked){background:var(--chip); border-color:var(--accent); font-weight:700; color:var(--accent-d)}
+  .checks input{width:auto; margin:0; flex:none; accent-color:var(--accent)}
+  .checks.days{grid-template-columns:repeat(auto-fill,minmax(84px,1fr))}
+
+  .samecheck{
+    display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700;
+    background:var(--chip); border:1px solid #cfe3dc; color:var(--accent-d);
+    border-radius:8px; padding:9px 11px; margin-bottom:14px; cursor:pointer;
+  }
+  .samecheck input{width:auto; margin:0; flex:none; accent-color:var(--accent)}
+
+  .actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:6px}
+  button{
+    font:inherit; cursor:pointer; border:1px solid var(--line); background:#fff;
+    color:var(--ink); border-radius:9px; padding:12px 20px; font-weight:700;
+  }
+  button.primary{background:var(--accent); border-color:var(--accent); color:#fff; flex:1 1 240px}
+  button.primary:hover{background:var(--accent-d)}
+  button:disabled{opacity:.5; cursor:not-allowed}
+
+  .notice{
+    font-size:13px; background:#fff7ed; border:1px solid #f0d5b8; color:#8a5220;
+    padding:11px 13px; border-radius:8px; margin-bottom:14px;
+  }
+  .notice.ok{background:var(--chip); border-color:#bfe0d6; color:var(--accent-d)}
+  .cond{display:none}
+  .cond.show{display:block}
+
+  .confirm dl{margin:0; border-top:1px solid var(--line2)}
+  .confirm .row{display:flex; gap:12px; padding:10px 2px; border-bottom:1px solid var(--line2); font-size:14px}
+  .confirm .row dt{flex:0 0 40%; color:var(--sub); font-weight:700; margin:0; font-size:13px}
+  .confirm .row dd{flex:1; margin:0; word-break:break-word}
+  .confirm .row dd.empty{color:#aab}
+  .confirm h3{
+    font-size:13px; margin:18px 0 0; color:var(--accent-d);
+    background:var(--chip); border-radius:999px; padding:4px 12px; display:inline-block;
+  }
+
+  .done{text-align:center; padding:26px 10px}
+  .done .mark{
+    width:64px; height:64px; border-radius:50%; background:var(--chip); color:var(--accent);
+    display:flex; align-items:center; justify-content:center; font-size:34px; margin:0 auto 14px;
+  }
+  .done h2{font-size:19px; margin:0 0 8px}
+  .done p{color:var(--sub); font-size:14px; margin:0 auto; max-width:460px}
+
+  footer.app{text-align:center; font-size:12px; color:var(--sub); padding:6px 0 0; line-height:1.9}
+  .hide{display:none !important}
+
+  @media print{
+    body{background:#fff}
+    .noprint{display:none !important}
+    .card{border-color:#999; page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="app">
+    <div class="logo">大泉</div>
+    <div>
+      <h1>事業系ごみ　定期回収のお申込み</h1>
+      <div class="sub">大泉衛生株式会社</div>
+    </div>
+  </header>
+
+  <!-- ============ 入力画面 ============ -->
+  <div id="screen-form">
+
+    <div class="card noprint">
+      <div class="cbody">
+        <p class="lead" style="margin:0">
+          このたびはお引き合いをいただき、誠にありがとうございます。<br>
+          定期回収のご契約に必要な情報を、<strong>下記のフォームにご入力ください</strong>。
+          回収の曜日や料金は、いただいた内容をもとに弊社よりご提案いたします。
+        </p>
+        <ul class="steps">
+          <li><b>STEP 1</b>このフォームをご入力・送信</li>
+          <li><b>STEP 2</b>弊社から回収プランと<br>お見積りをご連絡</li>
+          <li><b>STEP 3</b>ご契約・回収開始</li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="gasWarn" class="notice hide noprint">
+      ただいま送信の準備中です。お手数ですが、お電話（06-6696-6789）またはメールにてご連絡ください。
+    </div>
+
+    <!-- 1. 契約者情報 -->
+    <div class="card">
+      <div class="chead"><span class="n">1</span>ご契約者の情報</div>
+      <div class="cbody">
+
+        <div class="field">
+          <label class="lab" for="f_hname">事業者名（法人名・屋号）<span class="req">必須</span></label>
+          <div class="guide">ご契約者様（会社・お店・個人）のお名前です。登記上の正式名称でご記入ください。
+<span class="ex">【例】〇〇株式会社　／　居酒屋〇〇　／　山田 太郎（個人の場合）</span></div>
+          <input id="f_hname" type="text" autocomplete="organization" placeholder="〇〇株式会社">
+          <div class="err" id="e_hname">ご入力ください</div>
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_haddr">事業者住所（本社・ご自宅）<span class="req">必須</span></label>
+          <div class="guide">ご契約者様の本社・ご自宅の住所です。
+<span class="ex">【例】大阪市中央区〇〇町1-2-3　〇〇ビル5F</span></div>
+          <input id="f_haddr" type="text" autocomplete="street-address" placeholder="大阪市中央区〇〇町1-2-3">
+          <div class="err" id="e_haddr">ご入力ください</div>
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_htel">電話番号<span class="req">必須</span></label>
+          <div class="guide">ご契約者様の代表連絡先です。
+<span class="ex">【例】06-1234-5678　／　090-0000-0000</span></div>
+          <input id="f_htel" type="tel" inputmode="tel" placeholder="06-1234-5678">
+          <div class="err" id="e_htel">ご入力ください</div>
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_daihyo">代表者　役職・氏名<span class="req">必須</span></label>
+          <div class="guide">契約書の当事者名として記載します。
+※個人・個人事業主の場合は、ご自身のお名前をご記入ください。
+<span class="ex">【例】代表取締役　山田 太郎</span></div>
+          <input id="f_daihyo" type="text" placeholder="代表取締役　山田 太郎">
+          <div class="err" id="e_daihyo">ご入力ください</div>
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_gyoshu">業種<span class="req">必須</span></label>
+          <div class="guide">出るごみの種類と量の見当をつけるためにお伺いしています。
+近いものをお選びください。</div>
+          <select id="f_gyoshu">
+            <option value="">選択してください</option>
+            <option>飲食店</option><option>スーパー・小売店</option>
+            <option>事務所・オフィス</option><option>病院・クリニック</option>
+            <option>介護・福祉施設</option><option>学校・保育園</option>
+            <option>工場・作業所</option><option>ホテル・旅館</option>
+            <option>民泊</option><option>マンション・アパート</option>
+            <option>美容室・理容室</option><option>その他</option>
+          </select>
+          <div class="err" id="e_gyoshu">お選びください</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 2. 回収に伺う場所 -->
+    <div class="card">
+      <div class="chead"><span class="n">2</span>回収に伺う場所</div>
+      <div class="cbody">
+
+        <label class="samecheck noprint">
+          <input type="checkbox" id="sameAsHonsha">
+          回収に伺う場所は「1. ご契約者の情報」と同じです
+        </label>
+
+        <div class="field">
+          <label class="lab" for="f_jname">現場名<span class="req">必須</span></label>
+          <div class="guide">実際にごみが出る場所（店舗・事務所・施設・物件）の名称です。
+<span class="ex">【例】〇〇株式会社　本店　／　〇〇アパート</span></div>
+          <input id="f_jname" type="text" placeholder="〇〇株式会社　本店">
+          <div class="err" id="e_jname">ご入力ください</div>
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_jbldg">ビル・マンション名／階数<span class="opt">任意</span></label>
+          <div class="guide">建物に入っている場合はご記入ください。
+<span class="ex">【例】〇〇ビル 3F　／　〇〇マンション 1階店舗</span></div>
+          <input id="f_jbldg" type="text">
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_jaddr">現場住所<span class="req">必須</span></label>
+          <div class="guide">ごみが実際に出る場所の住所です。マンション・アパートの場合、排出される部屋番号もすべてご記入ください。
+<span class="ex">【例】大阪市東住吉区〇〇1-2-3</span></div>
+          <input id="f_jaddr" type="text" placeholder="大阪市東住吉区〇〇1-2-3">
+          <div class="err" id="e_jaddr">ご入力ください</div>
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_jtel">現場の電話番号<span class="req">必須</span></label>
+          <div class="guide">回収当日にご連絡する場合がございます。ご契約者と同じで構いません。
+<span class="ex">【例】06-1234-5678</span></div>
+          <input id="f_jtel" type="tel" inputmode="tel" placeholder="06-1234-5678">
+          <div class="err" id="e_jtel">ご入力ください</div>
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_jtanto">現場ご担当者名<span class="req">必須</span></label>
+          <div class="guide">回収当日にやり取りをさせていただく方のお名前です。
+※個人契約の場合は、ご自身のお名前をご記入ください。
+<span class="ex">【例】田中 太郎</span></div>
+          <input id="f_jtanto" type="text" placeholder="田中 太郎">
+          <div class="err" id="e_jtanto">ご入力ください</div>
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_place">ごみを置いていただく場所<span class="opt">任意</span></label>
+          <div class="guide">回収に伺う場所が分かるようにご記入ください。鍵や暗証番号が必要な場合もお書きください。
+<span class="ex">【例】建物裏の勝手口横　／　地下1階ごみ置き場（鍵が必要）</span></div>
+          <input id="f_place" type="text">
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_teikyu">定休日<span class="opt">任意</span></label>
+          <div class="guide">お休みの日には回収に伺わないよう調整します。
+<span class="ex">【例】日曜・祝日　／　毎週水曜　／　年中無休</span></div>
+          <input id="f_teikyu" type="text" placeholder="日曜・祝日">
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_eigyo">営業時間<span class="opt">任意</span></label>
+          <div class="guide">回収に伺う時間帯を決める参考にいたします。
+<span class="ex">【例】9:00〜18:00　／　17:00〜翌2:00</span></div>
+          <input id="f_eigyo" type="text" placeholder="9:00〜18:00">
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 3. 出るごみ -->
+    <div class="card">
+      <div class="chead"><span class="n">3</span>出るごみについて</div>
+      <div class="cbody">
+
+        <div class="field">
+          <label class="lab">ごみの種類<span class="req">必須</span></label>
+          <div class="guide">当てはまるものをすべてお選びください。分からない場合はおおよそで結構です。</div>
+          <div class="checks" id="gomiShurui">
+            <label><input type="checkbox" value="生ごみ（厨芥）">生ごみ（厨芥）</label>
+            <label><input type="checkbox" value="紙くず">紙くず</label>
+            <label><input type="checkbox" value="木くず">木くず</label>
+            <label><input type="checkbox" value="繊維くず">繊維くず</label>
+            <label><input type="checkbox" value="動植物性残渣">動植物性残渣</label>
+            <label><input type="checkbox" value="その他" id="chkOther">その他</label>
+          </div>
+          <div class="err" id="e_gomi">1つ以上お選びください</div>
+          <div class="field cond" id="otherWrap" style="margin-top:12px; margin-bottom:0">
+            <label class="lab" for="f_shurui_other" style="font-size:13px">その他の内容</label>
+            <input id="f_shurui_other" placeholder="例）廃食用油">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_ryo">1回あたりに出る量の目安<span class="req">必須</span></label>
+          <div class="guide">お見積りに使います。袋の数や容器の数でおおよそで構いません。
+<span class="ex">【例】45Lポリ袋 3袋　／　90Lポリ袋 1袋　／　20Lバケツ 2杯</span></div>
+          <input id="f_ryo" type="text" placeholder="45Lポリ袋 3袋">
+          <div class="err" id="e_ryo">ご入力ください</div>
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_kaisu">ご希望の収集回数<span class="opt">任意</span></label>
+          <div class="guide">ご相談のうえ決めますので、おおよそのご希望で構いません。</div>
+          <select id="f_kaisu">
+            <option value="">おまかせ・相談したい</option>
+            <option>週1回</option><option>週2回</option><option>週3回</option>
+            <option>週4回</option><option>週5回</option><option>週6回</option>
+            <option>毎日</option><option>月2回</option><option>月1回</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="lab">ご希望の曜日<span class="opt">任意</span></label>
+          <div class="guide">回収に来てほしい曜日があればお選びください。空欄でも構いません。</div>
+          <div class="checks days" id="gomiYoubi">
+            <label><input type="checkbox" value="月">月</label>
+            <label><input type="checkbox" value="火">火</label>
+            <label><input type="checkbox" value="水">水</label>
+            <label><input type="checkbox" value="木">木</label>
+            <label><input type="checkbox" value="金">金</label>
+            <label><input type="checkbox" value="土">土</label>
+            <label><input type="checkbox" value="日">日</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_kaishi">回収開始のご希望日<span class="opt">任意</span></label>
+          <div class="guide">お急ぎの場合はお書きください。
+<span class="ex">【例】2026年9月1日　／　できるだけ早く</span></div>
+          <input id="f_kaishi" type="text" placeholder="2026年9月1日">
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 4. 請求について -->
+    <div class="card">
+      <div class="chead"><span class="n">4</span>お支払い・請求について</div>
+      <div class="cbody">
+
+        <div class="notice noprint" style="margin-bottom:16px">
+          請求先が<strong>「1. ご契約者の情報」と同じ場合は、下の3つは空欄で結構です</strong>。
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_sname">請求先名<span class="opt">任意</span></label>
+          <div class="guide">請求書に記載するお宛名です。ご契約者名と異なる場合のみご記入ください。
+<span class="ex">【例】〇〇株式会社　経理部　御中</span></div>
+          <input id="f_sname" type="text" placeholder="（ご契約者名と同じ場合は空欄）">
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_saddr">請求先住所<span class="opt">任意</span></label>
+          <div class="guide">請求書をお届けするご住所です。ご契約者住所と異なる場合のみご記入ください。
+<span class="ex">【例】大阪市中央区〇〇町1-2-3　〇〇ビル5F　経理部宛</span></div>
+          <input id="f_saddr" type="text" placeholder="（ご契約者住所と同じ場合は空欄）">
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_stel">請求先の電話番号<span class="opt">任意</span></label>
+          <div class="guide">経理ご担当につながる番号があればご記入ください。
+<span class="ex">【例】06-1234-5678</span></div>
+          <input id="f_stel" type="tel" inputmode="tel" placeholder="（ご契約者と同じ場合は空欄）">
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_shiharai">ご希望のお支払い方法<span class="opt">任意</span></label>
+          <div class="guide">ご希望を伺ったうえで、あらためてご案内いたします。</div>
+          <select id="f_shiharai">
+            <option value="">相談したい・未定</option>
+            <option>口座振替</option>
+            <option>銀行振込</option>
+            <option>集金（現金）</option>
+          </select>
+        </div>
+
+        <div class="field cond" id="shukinWrap">
+          <label class="lab" for="f_shukin">集金に伺える時間帯<span class="opt">任意</span></label>
+          <div class="guide">集金をご希望の場合、お伺いしやすい曜日・時間帯をお書きください。
+<span class="ex">【例】平日 14:00〜17:00　／　月末の午前中</span></div>
+          <input id="f_shukin" type="text">
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_smail">請求書送付先メールアドレス<span class="opt">任意</span></label>
+          <div class="guide">請求書を電子（PDF）でお送りする場合の宛先です。下のご担当者様と異なる場合のみご記入ください。
+<span class="ex">【例】keiri@example.co.jp</span></div>
+          <input id="f_smail" type="email" inputmode="email" placeholder="（ご担当者様と同じ場合は空欄）">
+          <div class="err" id="e_smail">メールアドレスの形式をご確認ください</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 5. ご契約担当者 -->
+    <div class="card">
+      <div class="chead"><span class="n">5</span>ご契約手続きのご担当者</div>
+      <div class="cbody">
+
+        <label class="samecheck noprint">
+          <input type="checkbox" id="sameAsGenba">
+          ご契約手続きのご担当者は「2. 現場ご担当者」と同じ方です
+        </label>
+
+        <div class="field">
+          <label class="lab" for="f_tname">ご担当者名（フルネーム）<span class="req">必須</span></label>
+          <div class="guide">契約書へのご署名や、お見積り・お手続きのご連絡をさせていただく方です。
+<span class="ex">【例】池田 義仁</span></div>
+          <input id="f_tname" type="text" autocomplete="name" placeholder="池田 義仁">
+          <div class="err" id="e_tname">ご入力ください</div>
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_tyaku">役職<span class="req">必須</span></label>
+          <div class="guide">契約書の署名欄に表示される場合があります。
+<span class="ex">【例】代表取締役　／　店長　／　総務部長</span></div>
+          <input id="f_tyaku" type="text" placeholder="店長">
+          <div class="err" id="e_tyaku">ご入力ください</div>
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_ttel">電話番号<span class="req">必須</span></label>
+          <div class="guide">ご担当者様に繋がる番号をご記入ください。
+<span class="ex">【例】080-1234-5678</span></div>
+          <input id="f_ttel" type="tel" inputmode="tel" autocomplete="tel" placeholder="080-1234-5678">
+          <div class="err" id="e_ttel">ご入力ください</div>
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_tmail">メールアドレス<span class="req">必須</span></label>
+          <div class="guide">このアドレス宛にお見積りとお手続きのご案内をお送りします。
+※お間違いがあるとご連絡できませんので、必ずご確認ください。
+<span class="ex">【例】y.ikeda@example.co.jp</span></div>
+          <input id="f_tmail" type="email" inputmode="email" autocomplete="email" placeholder="y.ikeda@example.co.jp">
+          <div class="err" id="e_tmail">メールアドレスの形式をご確認ください</div>
+        </div>
+
+        <div class="field">
+          <label class="lab" for="f_biko">ご要望・ご質問<span class="opt">任意</span></label>
+          <div class="guide">お伝えいただきたいことがあればご記入ください。
+<span class="ex">【例】現在は他社と契約中で、今月末で解約予定です</span></div>
+          <textarea id="f_biko" placeholder="ご自由にご記入ください"></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="actions noprint">
+      <button type="button" class="primary" id="btnConfirm">入力内容を確認する</button>
+    </div>
+  </div>
+
+  <!-- ============ 確認画面 ============ -->
+  <div id="screen-confirm" class="hide">
+    <div class="notice noprint">下記の内容で送信します。お間違いがないかご確認ください。</div>
+    <div class="card confirm">
+      <div class="chead">ご入力内容の確認</div>
+      <div class="cbody" id="confirmBody"></div>
+    </div>
+    <div class="actions noprint">
+      <button type="button" id="btnBack">修正する</button>
+      <button type="button" class="primary" id="btnSend">この内容で送信する</button>
+    </div>
+  </div>
+
+  <!-- ============ 完了画面 ============ -->
+  <div id="screen-done" class="hide">
+    <div class="card">
+      <div class="cbody done">
+        <div class="mark">✓</div>
+        <h2>送信が完了しました</h2>
+        <p>
+          ご入力いただき、ありがとうございました。<br>
+          内容を確認のうえ、回収プランとお見積りを
+          ご記入いただいたメールアドレス宛にご連絡いたします。<br><br>
+          しばらくお待ちくださいませ。
+        </p>
+        <div class="actions noprint" style="justify-content:center; margin-top:20px">
+          <button type="button" onclick="window.print()">この画面を印刷して控える</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="cbody" id="doneBody"></div>
+    </div>
+  </div>
+
+  <footer class="app">
+    大泉衛生株式会社　〒546-0032 大阪市東住吉区東田辺3-26-31<br>
+    TEL 06-6696-6789（平日 8:30〜17:00）　／　d-daisen@aurora.ocn.ne.jp<br>
+    大阪市 一般廃棄物収集運搬業 許可番号 第003-123号
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   ▼▼▼ ここだけ設定してください ▼▼▼
+   ============================================================ */
+
+// Google Apps Script のウェブアプリURL（デプロイ後に貼り付け）
+const GAS_URL = '';
+
+// 合言葉。GASコード.gs の SEND_KEY と同じ文字列にすること
+const SEND_KEY = 'dsn-ippan-4kt9wm';
+
+/* ============================================================
+   ▲▲▲ 設定はここまで ▲▲▲
+   ============================================================ */
+
+const FIELDS = [
+  { sec: '1. ご契約者の情報',
+    items: [
+      { id:'f_hname',  key:'h_name',  label:'事業者名',        req:true },
+      { id:'f_haddr',  key:'h_addr',  label:'事業者住所',      req:true },
+      { id:'f_htel',   key:'h_tel',   label:'電話番号',        req:true },
+      { id:'f_daihyo', key:'daihyo',  label:'代表者 役職・氏名', req:true },
+      { id:'f_gyoshu', key:'gyoshu',  label:'業種',            req:true },
+    ]},
+  { sec: '2. 回収に伺う場所',
+    items: [
+      { id:'f_jname',  key:'j_name',  label:'現場名',            req:true },
+      { id:'f_jbldg',  key:'j_bldg',  label:'ビル・マンション名', req:false },
+      { id:'f_jaddr',  key:'j_addr',  label:'現場住所',          req:true },
+      { id:'f_jtel',   key:'j_tel',   label:'現場の電話番号',    req:true },
+      { id:'f_jtanto', key:'j_tanto', label:'現場ご担当者名',    req:true },
+      { id:'f_place',  key:'gomi_ba', label:'ごみを置く場所',    req:false },
+      { id:'f_teikyu', key:'teikyu',  label:'定休日',            req:false },
+      { id:'f_eigyo',  key:'eigyo_time', label:'営業時間',       req:false },
+    ]},
+  { sec: '3. 出るごみについて',
+    items: [
+      { id:'f_shurui_other', key:'shurui_other', label:'その他の内容', req:false },
+      { id:'f_ryo',    key:'ryo',     label:'1回あたりの量', req:true },
+      { id:'f_kaisu',  key:'kaisu',   label:'希望の収集回数', req:false },
+      { id:'f_kaishi', key:'kaishi',  label:'回収開始の希望日', req:false },
+    ]},
+  { sec: '4. お支払い・請求について',
+    items: [
+      { id:'f_sname',    key:'s_name',    label:'請求先名',            req:false },
+      { id:'f_saddr',    key:'s_addr',    label:'請求先住所',          req:false },
+      { id:'f_stel',     key:'s_tel',     label:'請求先の電話番号',    req:false },
+      { id:'f_shiharai', key:'shiharai',  label:'希望のお支払い方法',  req:false },
+      { id:'f_shukin',   key:'shukin',    label:'集金に伺える時間帯',  req:false },
+      { id:'f_smail',    key:'s_mail',    label:'請求書送付先メール',  req:false, mail:true },
+    ]},
+  { sec: '5. ご契約手続きのご担当者',
+    items: [
+      { id:'f_tname', key:'tanto_name', label:'ご担当者名',     req:true },
+      { id:'f_tyaku', key:'tanto_yaku', label:'役職',           req:true },
+      { id:'f_ttel',  key:'tanto_tel',  label:'電話番号',       req:true },
+      { id:'f_tmail', key:'tanto_mail', label:'メールアドレス', req:true, mail:true },
+      { id:'f_biko',  key:'biko',       label:'ご要望・ご質問', req:false },
+    ]},
+];
+
+const $ = (id) => document.getElementById(id);
+const val = (id) => ($(id).value || '').trim();
+const picked = (sel) => [...document.querySelectorAll(sel + ' input:checked')].map(b=>b.value);
+
+/* --- 条件表示 --- */
+function syncCond(){
+  $('otherWrap').classList.toggle('show', $('chkOther').checked);
+  $('shukinWrap').classList.toggle('show', val('f_shiharai') === '集金（現金）');
+}
+
+/* --- 「同じ」チェック --- */
+$('sameAsHonsha').addEventListener('change', function(){
+  if(!this.checked) return;
+  if(!val('f_jname')) $('f_jname').value = val('f_hname');
+  if(!val('f_jaddr')) $('f_jaddr').value = val('f_haddr');
+  if(!val('f_jtel'))  $('f_jtel').value  = val('f_htel');
+});
+$('sameAsGenba').addEventListener('change', function(){
+  if(!this.checked) return;
+  if(!val('f_tname')) $('f_tname').value = val('f_jtanto');
+  if(!val('f_ttel'))  $('f_ttel').value  = val('f_jtel');
+});
+
+/* --- 入力チェック --- */
+function clearErr(){
+  document.querySelectorAll('.err').forEach(e=>e.classList.remove('show'));
+  document.querySelectorAll('input,select,textarea').forEach(e=>e.classList.remove('bad'));
+}
+function validate(){
+  clearErr();
+  let first = null;
+  FIELDS.forEach(g => g.items.forEach(f => {
+    const v = val(f.id);
+    let ng = false;
+    if(f.req && !v) ng = true;
+    if(f.mail && v && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) ng = true;
+    if(ng){
+      $(f.id).classList.add('bad');
+      const e = $('e_' + f.id.slice(2));
+      if(e) e.classList.add('show');
+      if(!first) first = $(f.id);
+    }
+  }));
+  if(!picked('#gomiShurui').length){
+    $('e_gomi').classList.add('show');
+    if(!first) first = $('gomiShurui');
+  }
+  if(first){
+    first.scrollIntoView({behavior:'smooth', block:'center'});
+    if(first.focus) first.focus({preventScroll:true});
+    return false;
+  }
+  return true;
+}
+
+/* --- 確認画面 --- */
+function buildConfirm(target){
+  let html = '';
+  FIELDS.forEach(g => {
+    html += '<h3>' + g.sec + '</h3><dl>';
+    if(g.sec.startsWith('3.')){
+      const s = picked('#gomiShurui').join('・');
+      html += row('ごみの種類', s);
+    }
+    g.items.forEach(f => {
+      if(f.id === 'f_shurui_other' && !$('chkOther').checked) return;
+      if(f.id === 'f_shukin' && val('f_shiharai') !== '集金（現金）') return;
+      html += row(f.label, val(f.id));
+    });
+    if(g.sec.startsWith('3.')){
+      const y = picked('#gomiYoubi').join('・');
+      html += row('希望の曜日', y);
+    }
+    html += '</dl>';
+  });
+  target.innerHTML = html;
+}
+function row(label, v){
+  return '<div class="row"><dt>' + label + '</dt><dd' + (v ? '' : ' class="empty"') + '>'
+       + (v ? esc(v).replace(/\n/g,'<br>') : '（未入力）') + '</dd></div>';
+}
+function esc(s){
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function show(which){
+  ['form','confirm','done'].forEach(k => $('screen-'+k).classList.toggle('hide', k!==which));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+$('btnConfirm').addEventListener('click', () => {
+  if(!validate()) return;
+  buildConfirm($('confirmBody'));
+  show('confirm');
+});
+$('btnBack').addEventListener('click', () => show('form'));
+
+/* --- 送信 --- */
+$('btnSend').addEventListener('click', async () => {
+  const btn = $('btnSend');
+  btn.disabled = true;
+  btn.textContent = '送信中…';
+
+  const payload = { key: SEND_KEY };
+  FIELDS.forEach(g => g.items.forEach(f => { payload[f.key] = val(f.id); }));
+  payload.shurui = picked('#gomiShurui').join('・');
+  payload.youbi  = picked('#gomiYoubi').join('・');
+
+  try{
+    await fetch(GAS_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(payload)
+    });
+    buildConfirm($('doneBody'));
+    show('done');
+  }catch(err){
+    btn.disabled = false;
+    btn.textContent = 'この内容で送信する';
+    alert('送信に失敗しました。通信環境をご確認のうえ、もう一度お試しください。\n'
+        + '繰り返し失敗する場合は 06-6696-6789 までお電話ください。');
+  }
+});
+
+document.addEventListener('change', syncCond);
+syncCond();
+
+if(!GAS_URL){
+  $('gasWarn').classList.remove('hide');
+  $('btnSend').disabled = true;
+}
+</script>
+</body>
+</html>
