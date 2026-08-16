@@ -120,12 +120,22 @@
   body.a5 .doc{
     width:240mm; padding:7mm 9mm; zoom:.80;
   }
-  body.a5 .sheet{column-count:2; column-gap:8mm}
-  body.a5 .doc h2{font-size:14px; margin-bottom:0.5mm}
-  body.a5 .doc .cap{margin-bottom:2.5mm}
-  body.a5 .doc .blk{margin-bottom:2mm}
-  body.a5 .doc .sec{margin-top:0}
-  body.a5 .doc .foot{margin-top:2.5mm}
+  /* A4用紙に半分だけ印刷して、切り取り線で切る（A5用紙がなくても同じ大きさになる） */
+  body.half .doc{
+    width:240mm; padding:7mm 9mm; zoom:.80; min-height:185mm;
+  }
+  .cutline{display:none}
+  body.half .cutline{
+    display:block; width:190mm; margin:0 auto; border-top:1px dashed #888;
+    font-size:9px; color:#777; text-align:right; padding-top:1mm;
+  }
+
+  body.a5 .sheet, body.half .sheet{column-count:2; column-gap:8mm}
+  body.a5 .doc h2, body.half .doc h2{font-size:14px; margin-bottom:0.5mm}
+  body.a5 .doc .cap, body.half .doc .cap{margin-bottom:2.5mm}
+  body.a5 .doc .blk, body.half .doc .blk{margin-bottom:2mm}
+  body.a5 .doc .sec, body.half .doc .sec{margin-top:0}
+  body.a5 .doc .foot, body.half .doc .foot{margin-top:2.5mm}
 
   .sizebtn{padding:6px 12px !important; font-size:12px !important}
   .sizebtn.on{background:var(--accent) !important; border-color:var(--accent) !important; color:#fff !important}
@@ -138,6 +148,7 @@
     .stage{padding:0; background:#fff}
     .doc{width:auto; min-height:auto; margin:0; box-shadow:none; padding:10mm 10mm}
     body.a5 .doc{width:240mm; min-height:auto; padding:6mm 8mm; zoom:.80}
+    body.half .doc{width:240mm; min-height:185mm; padding:6mm 8mm; zoom:.80; box-shadow:none}
   }
 </style>
 </head>
@@ -358,8 +369,9 @@
         <button type="button" class="primary" id="btnPrint">登録シートをPDFにする</button>
         <span style="display:inline-flex; align-items:center; gap:6px; margin-left:4px">
           <span class="hint" style="margin:0">用紙</span>
-          <button type="button" class="sizebtn" data-size="a4">A4</button>
-          <button type="button" class="sizebtn" data-size="a5">A5横（A4の半分）</button>
+          <button type="button" class="sizebtn" data-size="half">A4に半分（切って使う）</button>
+          <button type="button" class="sizebtn" data-size="a5">A5横の用紙</button>
+          <button type="button" class="sizebtn" data-size="a4">A4まるごと</button>
         </span>
         <span style="flex:1"></span>
         <span class="hint" style="margin:0">契約書本体は様式をいただき次第、追加します</span>
@@ -461,6 +473,7 @@
             <tr><td id="d_teigyo"></td><td id="d_tkanri"></td><td id="d_tjimu"></td></tr></table>
           </div>
         </div>
+        <div class="cutline">✂ ここで切ると A4 のちょうど半分になります</div>
       </div>
     </div>
   </div>
@@ -639,7 +652,9 @@ async function loadRecord(id){
 /* --- 用紙サイズ（A4 / A5＝A4の半分） --- */
 const SIZE_STORE = 'daisen_ippan_maker_size';
 function setSize(size){
-  document.body.classList.toggle('a5', size === 'a5');
+  document.body.classList.toggle('a5',   size === 'a5');
+  document.body.classList.toggle('half', size === 'half');
+  // A5用紙のときだけ用紙指定を変える。「A4に半分」はA4用紙に出して切る
   $('pageSize').textContent = size === 'a5'
     ? '@page{size:A5 landscape; margin:0}'
     : '@page{size:A4 portrait; margin:0}';
@@ -649,8 +664,8 @@ function setSize(size){
 }
 document.querySelectorAll('.sizebtn').forEach(b =>
   b.addEventListener('click', () => setSize(b.dataset.size)));
-let savedSize = 'a5';
-try{ savedSize = localStorage.getItem(SIZE_STORE) || 'a5'; }catch(e){}
+let savedSize = 'half';
+try{ savedSize = localStorage.getItem(SIZE_STORE) || 'half'; }catch(e){}
 setSize(savedSize);
 
 /* --- 操作 --- */
