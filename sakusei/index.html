@@ -94,26 +94,32 @@
     color:#111; font-size:11.5px; line-height:1.45; box-shadow:0 1px 6px rgba(0,0,0,.14);
     font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
   }
+  /* 得意先No. / 現場No. は表の外・上に置く（実物どおり） */
+  .doc .topno{
+    display:flex; gap:16mm; justify-content:center; font-size:11px;
+    margin:0 0 1.5mm; padding-left:12mm;
+  }
+  .doc .topno b{font-weight:700; margin-left:3mm; min-width:22mm; display:inline-block}
+
   .doc table.reg{width:100%; border-collapse:collapse; table-layout:fixed}
   .doc .reg th,.doc .reg td{
-    border:1px solid #111; padding:0.8mm 1.6mm; font-size:10px;
-    vertical-align:middle; line-height:1.35; height:6.2mm;
+    border:1px solid #000; padding:0.6mm 1.2mm; font-size:10.5px;
+    vertical-align:middle; line-height:1.3; height:6.6mm;
+    text-align:center; word-break:break-word;
   }
-  .doc .reg th{background:#f2f2f2; text-align:left; font-weight:400; white-space:nowrap; letter-spacing:-.02em}
-  .doc .reg td{word-break:break-word}
-  .doc .empty{color:#bbb}
-  /* 選択肢は全部印字して、選んだものに丸を付ける（紙の様式と同じ見え方） */
+  /* 項目名は細字、記入値は太字（実物と同じ） */
+  .doc .reg th{font-weight:400; white-space:nowrap; letter-spacing:-.03em}
+  .doc .reg td{font-weight:700}
+  .doc .reg td.ltd{text-align:left; font-weight:400; padding-left:2mm}
+  .doc .reg td.blank{height:9mm}
+  .doc .reg .tall{height:auto}
+  .doc .empty{color:#bbb; font-weight:400}
+  /* 選んだものを青い丸で囲む（実物と同じ） */
   .doc .on{
-    display:inline-block; border:1.2px solid #111; border-radius:999px;
-    padding:0 1.4mm; font-weight:700;
+    display:inline-block; border:1.3px solid #1f3864; border-radius:50%;
+    padding:0 1.6mm; color:#000;
   }
-  .doc .off{color:#111}
-  .doc .stamph{text-align:center; font-size:9px; background:#f2f2f2}
-  .doc .stampbox{padding:0 !important}
-  .doc .stampbox span{
-    display:inline-block; width:33.3%; height:11mm; border-right:1px solid #111; vertical-align:top;
-  }
-  .doc .stampbox span:last-child{border-right:none}
+  .doc .off{color:#000}
 
   /* A5横（A4を横半分に切った 210×148）＝紙の控えと同じ大きさ */
   body.a5 .doc{ width:236mm; padding:5mm 6mm; zoom:.82; }
@@ -370,43 +376,66 @@
       <style id="pageSize">@page{size:A5 landscape; margin:0}</style>
       <div class="stage">
         <div class="doc" id="doc">
+          <div class="topno">
+            <span>得意先No.<b id="r_tokui"></b></span>
+            <span>現場No.<b id="r_genbano"></b></span>
+          </div>
           <table class="reg">
-            <colgroup>
-              <col style="width:23mm"><col style="width:40mm">
-              <col style="width:21mm"><col style="width:34mm">
-              <col style="width:21mm"><col style="width:33mm">
-            </colgroup>
-            <tr><th>得意先No.</th><td id="r_tokui"></td>
-                <th>現場No.</th><td id="r_genbano"></td>
-                <th>契約担当名</th><td id="r_ktanto"></td></tr>
-            <tr><th>現場名</th><td colspan="3" id="r_jname"></td>
-                <th>業種別番号</th><td id="r_gyono"></td></tr>
-            <tr><th>現場住所</th><td colspan="5" id="r_jaddr"></td></tr>
-            <tr><th>ﾋﾞﾙ・ﾏﾝｼｮﾝ名</th><td colspan="3" id="r_jbldg"></td>
-                <th>TEL</th><td id="r_jtel"></td></tr>
-            <tr><th>請求先名</th><td colspan="3" id="r_sname"></td>
-                <th>契約額</th><td id="r_gaku"></td></tr>
-            <tr><th>請求先住所</th><td colspan="5" id="r_saddr"></td></tr>
-            <tr><th>ﾋﾞﾙ・ﾏﾝｼｮﾝ名</th><td colspan="3" id="r_sbldg"></td>
-                <th>TEL</th><td id="r_stel"></td></tr>
-            <tr><th>相手担当者</th><td id="r_aite"></td>
-                <th>役職等</th><td id="r_yaku"></td>
-                <th>経理担当</th><td id="r_keiri"></td></tr>
-            <tr><th>支払方法</th><td colspan="5" id="r_pay"></td></tr>
-            <tr><th>初回収集日</th><td id="r_shokaishu"></td>
-                <th>初回入金日</th><td id="r_shokainyu"></td>
-                <th>車　番</th><td id="r_shaban"></td></tr>
-            <tr><th>無料ｻｰﾋﾞｽ期間</th><td id="r_muryo"></td>
-                <th>バケツ</th><td id="r_baketsu"></td>
-                <th>日曜回収</th><td id="r_nichiyou"></td></tr>
-            <tr><th>年末加算</th><td colspan="3" id="r_nenmatsu"></td>
-                <th>年始回収</th><td id="r_nenshi"></td></tr>
-            <tr><th>他サービス</th><td colspan="5" id="r_tasa"></td></tr>
-            <tr><th>区　分</th><td colspan="3" id="r_kubun"></td>
-                <th class="stamph" colspan="2" rowspan="1">営業　／　管理　／　事務</th></tr>
-            <tr><th>ゴミの種類</th><td colspan="3" id="r_gomi"></td>
-                <td colspan="2" class="stampbox"><span></span><span></span><span></span></td></tr>
-            <tr><th>備　考</th><td colspan="5" id="r_biko"></td></tr>
+            <colgroup><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col></colgroup>
+            <tr>
+              <th colspan="3">現場名</th><td colspan="8" id="r_jname"></td>
+              <th colspan="2">契約担当名</th><td colspan="7" id="r_ktanto"></td>
+            </tr>
+            <tr><th colspan="3">現場住所</th><td colspan="17" id="r_jaddr"></td></tr>
+            <tr>
+              <th colspan="3">ﾋﾞﾙ・ﾏﾝｼｮﾝ名</th><td colspan="6" id="r_jbldg"></td>
+              <th colspan="2">TEL</th><td colspan="9" id="r_jtel"></td>
+            </tr>
+            <tr>
+              <th colspan="3">請求先名</th><td colspan="6" id="r_sname"></td>
+              <th colspan="2">契約額</th><td colspan="9" id="r_gaku"></td>
+            </tr>
+            <tr><th colspan="3">請求先住所</th><td colspan="17" id="r_saddr"></td></tr>
+            <tr>
+              <th colspan="3">ﾋﾞﾙ・ﾏﾝｼｮﾝ名</th><td colspan="6" id="r_sbldg"></td>
+              <th colspan="2">TEL</th><td colspan="9" id="r_stel"></td>
+            </tr>
+            <tr>
+              <th colspan="3">相手担当者</th><td colspan="5" id="r_aite"></td>
+              <th colspan="2">役職等</th><td colspan="3" id="r_yaku"></td>
+              <th colspan="3">業種別番号</th><td colspan="4" id="r_gyono"></td>
+            </tr>
+            <tr><th colspan="3" rowspan="3" class="tall">支払方法</th>
+                <td colspan="17" id="r_pay1"></td></tr>
+            <tr><td colspan="17" id="r_pay2"></td></tr>
+            <tr><td colspan="17" id="r_pay3"></td></tr>
+            <tr>
+              <th colspan="3">初回収集日</th><td colspan="3" id="r_shokaishu"></td>
+              <th colspan="2">初回入金日</th><td colspan="5" id="r_shokainyu"></td>
+              <th colspan="2">車　番</th><td colspan="5" id="r_shaban"></td>
+            </tr>
+            <tr>
+              <th colspan="3">無料ｻｰﾋﾞｽ期間</th><td colspan="6" id="r_muryo"></td>
+              <td colspan="5" id="r_nichiyou"></td>
+              <th colspan="2">バケツ</th><td colspan="4" id="r_baketsu"></td>
+            </tr>
+            <tr>
+              <th colspan="3">他サービス</th><td colspan="6" id="r_nenmatsu"></td>
+              <td colspan="5" id="r_nenshi"></td><td colspan="6" id="r_kasan1"></td>
+            </tr>
+            <tr>
+              <td colspan="14" class="ltd" id="r_kubun"></td>
+              <th colspan="2">営業</th><td colspan="4"></td>
+            </tr>
+            <tr>
+              <td colspan="14" class="ltd" id="r_gomi"></td>
+              <th colspan="2">管理</th><td colspan="4"></td>
+            </tr>
+            <tr>
+              <td colspan="14" class="ltd" id="r_tasa"></td>
+              <th colspan="2">事務</th><td colspan="4"></td>
+            </tr>
+            <tr><td colspan="20" class="ltd blank" id="r_biko"></td></tr>
           </table>
         </div>
         <div class="cutline">✂ ここで切ると A4 のちょうど半分になります</div>
@@ -459,6 +488,11 @@ function jdate(s){
   const t = ymd(s);
   return t ? `${t.y}年${t.m}月${t.d}日` : '';
 }
+/* 実物の様式は年を書かず「7月23日」表記 */
+function md(s){
+  const t = ymd(s);
+  return t ? `${t.m}月${t.d}日` : '';
+}
 function yen(s){
   const n = String(s||'').replace(/[^\d]/g,'');
   return n ? Number(n).toLocaleString('ja-JP') + '円' : '';
@@ -493,76 +527,79 @@ function render(){
   txt('r_ktanto',  v('keiyaku_tanto'));
   txt('r_gyono',   v('gyoshu_no'));
 
-  txt('r_jname', join([v('j_name'), v('gyoshu') ? '（' + v('gyoshu') + '）' : ''], '　'));
+  txt('r_jname', v('j_name'));
   txt('r_jaddr', v('j_addr'));
   txt('r_jbldg', v('j_bldg'));
   txt('r_jtel',  v('j_tel'));
 
-  txt('r_sname', v('s_name'), v('h_name') ? esc('同上（' + v('h_name') + '）') : '&nbsp;');
-  txt('r_saddr', v('s_addr'), v('h_addr') ? esc('同上（' + v('h_addr') + '）') : '&nbsp;');
+  txt('r_sname', v('s_name'), v('h_name') ? esc('同上') : '&nbsp;');
+  txt('r_saddr', v('s_addr'), v('h_addr') ? esc('同上') : '&nbsp;');
   txt('r_sbldg', v('s_bldg'));
-  txt('r_stel',  v('s_tel'), v('h_tel') ? esc('同上（' + v('h_tel') + '）') : '&nbsp;');
+  txt('r_stel',  v('s_tel'),  v('h_tel')  ? esc('同上') : '&nbsp;');
 
-  cell('r_gaku', v('keiyaku_gaku')
-    ? esc(yen(v('keiyaku_gaku'))) + '　（' + opts(v('zei'), ['税抜','税込']) + '）'
-    : '', '（　' + opts('', ['税抜','税込']) + '　）');
+  cell('r_gaku', (v('keiyaku_gaku')
+      ? esc(Number(String(v('keiyaku_gaku')).replace(/[^\d]/g,'')||0).toLocaleString('ja-JP'))
+      : '')
+    + '（' + opts(v('zei'), ['税抜','税込']) + '）');
 
   txt('r_aite',  v('tanto_name'));
   txt('r_yaku',  v('tanto_yaku'));
-  txt('r_keiri', join([v('keiri'), v('keiri_tel') ? '（' + v('keiri_tel') + '）' : ''], ''));
 
-  /* 支払方法：紙の様式どおり2行 */
+  /* 支払方法 3行 */
   const shimeTxt = v('shime') === '日付指定'
-    ? (v('shime_hi') ? v('shime_hi') + '日' : '日付指定') : v('shime');
+    ? (v('shime_hi') ? v('shime_hi') + '日' : '') : v('shime');
   const biTxt = v('shiharai_hi') === '日付指定'
-    ? (v('shiharai_hi2') ? v('shiharai_hi2') + '日' : '日付指定') : v('shiharai_hi');
-  const line1 = join([
-    shimeTxt ? esc(shimeTxt + '締め') : '',
-    esc(join([v('shiharai_tsuki'), biTxt], '')),
-    opts(v('shiharai_hoho'), ['振込','自動引落','集金'])
-  ], '　');
-  const line2 = '（申込用紙　' + opts(v('moushikomi'), ['渡し済','郵送'])
-              + '）　（開始するまで　' + opts(v('kaishi_made'), ['振込','集金']) + '）'
-              + (v('shukin') ? '　集金 ' + esc(v('shukin')) : '');
-  cell('r_pay', line1 + '<br>' + line2);
+    ? (v('shiharai_hi2') ? v('shiharai_hi2') + '日' : '') : v('shiharai_hi');
+  cell('r_pay1', esc(join([
+      shimeTxt ? '当月' + (shimeTxt === '末日' ? '末' : shimeTxt) + '締め' : '',
+      join([v('shiharai_tsuki'), biTxt], ''),
+      v('shiharai_hoho')
+    ], '　')));
+  cell('r_pay2', '自動引落（申込用紙　' + opts(v('moushikomi'), ['渡し済','郵送'])
+    + '　）（開始するまで　' + opts(v('kaishi_made'), ['振込','集金']) + '　）');
+  cell('r_pay3', v('shukin') ? esc('集金 ' + v('shukin')) : '&nbsp;');
 
-  txt('r_shokaishu', jdate(v('shokai_shu')));
-  txt('r_shokainyu', join([jdate(v('shokai_nyu')),
-                           v('shokai_bun') ? '（' + v('shokai_bun') + '月分）' : ''], '　'));
+  txt('r_shokaishu', md(v('shokai_shu')));
+  cell('r_shokainyu', (v('shokai_nyu') ? esc(md(v('shokai_nyu'))) : '')
+    + '　（　' + esc(v('shokai_bun') || '　') + '　月分）');
   txt('r_shaban', v('shaban'));
 
   txt('r_muryo', v('muryo'));
-  cell('r_baketsu',  opts(v('baketsu'),  ['無','有']));
-  cell('r_nichiyou', opts(v('nichiyou'), ['無','有']));
-  cell('r_nenshi',   opts(v('nenshi'),   ['無','有']));
-  cell('r_nenmatsu',
-    opts(v('nenmatsu'), ['なし','あり'])
-    + '　（12月　' + esc(v('kasan12') ? Number(String(v('kasan12')).replace(/[^\d]/g,'')).toLocaleString('ja-JP') : '　　')
-    + '　円加算）　（1月　' + esc(v('kasan1') ? Number(String(v('kasan1')).replace(/[^\d]/g,'')).toLocaleString('ja-JP') : '　　')
-    + '　円加算）');
+  cell('r_nichiyou', '日曜回収（　' + opts(v('nichiyou'), ['有','無']) + '　）');
+  cell('r_baketsu',  opts(v('baketsu'), ['無','有']));
+  cell('r_nenshi',   '年始回収（　' + opts(v('nenshi'), ['有','無']) + '　）');
+
+  const kasan = k => v(k)
+    ? Number(String(v(k)).replace(/[^\d]/g,'')||0).toLocaleString('ja-JP') : '　　';
+  cell('r_nenmatsu', '年末加算' + opts(v('nenmatsu'), ['なし','あり'], '・')
+    + '（12月　' + esc(kasan('kasan12')) + '　円加算）');
+  cell('r_kasan1', '（1月　' + esc(kasan('kasan1')) + '　円加算）');
+
+  cell('r_kubun', opts(v('kubun'),
+      ['新規','地盤','ｵｰﾅｰ変更','社名変更','書換','値上','値下','その他'], '・')
+    + '（　' + esc(v('kubun_other') || '　　　　') + '　）');
+
+  const gomi = [...document.querySelectorAll('#gomiChecks input')];
+  cell('r_gomi', 'ゴミの種類　：　'
+    + gomi.filter(b => b.value !== 'その他')
+          .map(b => (b.checked ? '☑' : '□') + esc(b.value)).join('　・　')
+    + '　・　' + (gomi[gomi.length-1].checked ? '☑' : '□')
+    + 'その他（　' + esc(v('shurui_other') || '　　　　') + '　）');
 
   txt('r_tasa', v('tasa'));
 
-  cell('r_kubun', opts(v('kubun'),
-    ['新規','地盤','ｵｰﾅｰ変更','社名変更','書換','値上','値下','その他'], '・')
-    + '（' + esc(v('kubun_other') || '　　　') + '）');
-
-  const gomi = [...document.querySelectorAll('#gomiChecks input')];
-  cell('r_gomi', gomi.filter(b => b.value !== 'その他').map(b =>
-      (b.checked ? '☑' : '□') + esc(b.value)).join('　・　')
-    + '　・　' + (gomi[gomi.length-1].checked ? '☑' : '□') + 'その他（'
-    + esc(v('shurui_other') || '　　　') + '）');
-
-  cell('r_biko', join([
-    v('kaisu') || v('youbi') ? esc('収集：' + join([v('kaisu'), v('youbi')], '　')) : '',
-    v('ryo')    ? esc('量：' + v('ryo')) : '',
-    v('teikyu') ? esc('定休：' + v('teikyu')) : '',
-    v('eigyo_time') ? esc('営業：' + v('eigyo_time')) : '',
-    v('gomi_ba')    ? esc('置場：' + v('gomi_ba')) : '',
-    v('kaishi')     ? esc('開始希望：' + v('kaishi')) : '',
-    v('biko')       ? esc('要望：' + v('biko')) : '',
-    v('bikou_shanai') ? esc(v('bikou_shanai')) : ''
-  ], '　／　'));
+  cell('r_biko', esc(join([
+    v('kaisu') || v('youbi') ? '収集：' + join([v('kaisu'), v('youbi')], '　') : '',
+    v('ryo')        ? '量：' + v('ryo') : '',
+    v('teikyu')     ? '定休：' + v('teikyu') : '',
+    v('eigyo_time') ? '営業：' + v('eigyo_time') : '',
+    v('gomi_ba')    ? '置場：' + v('gomi_ba') : '',
+    v('gyoshu')     ? '業種：' + v('gyoshu') : '',
+    v('kaishi')     ? '開始希望：' + v('kaishi') : '',
+    v('keiri')      ? '経理：' + v('keiri') + (v('keiri_tel') ? '（' + v('keiri_tel') + '）' : '') : '',
+    v('biko')       ? '要望：' + v('biko') : '',
+    v('bikou_shanai') || ''
+  ], '　／　')));
 
   save();
 }
