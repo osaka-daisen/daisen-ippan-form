@@ -132,8 +132,45 @@
     font-size:9px; color:#777; text-align:right; padding-top:1mm;
   }
 
-  .sizebtn{padding:6px 12px !important; font-size:12px !important}
-  .sizebtn.on{background:var(--accent) !important; border-color:var(--accent) !important; color:#fff !important}
+  .sizebtn,.docbtn{padding:6px 12px !important; font-size:12px !important}
+  .sizebtn.on,.docbtn.on{background:var(--accent) !important; border-color:var(--accent) !important; color:#fff !important}
+  .hide{display:none !important}
+
+  /* ===== 契約書（A3横・左に条文／右に記入表） ===== */
+  .doc2{
+    width:420mm; min-height:297mm; margin:0 auto; background:#fff; padding:10mm 11mm;
+    color:#000; box-shadow:0 1px 6px rgba(0,0,0,.14); zoom:.45;
+    font-family:"Yu Mincho","Hiragino Mincho ProN","MS Mincho",serif;
+    display:grid; grid-template-columns:1fr 1fr; gap:0 9mm; align-items:start;
+  }
+  .doc2 .c-left{border-right:1px solid #000; padding-right:9mm}
+  .doc2 .ct{font-size:19px; text-align:center; margin:0 0 5mm; font-weight:700}
+  .doc2 .lead{font-size:11.5px; line-height:1.75; margin:0 0 4mm; text-align:justify}
+  .doc2 .fill{
+    display:inline-block; min-width:52mm; border-bottom:1px solid #000; font-weight:700;
+    font-family:"Yu Gothic","Meiryo",sans-serif; text-align:center;
+  }
+  .doc2 .art{margin:0 0 2.6mm}
+  .doc2 .ah{font-size:12px; font-weight:700; margin:0 0 0.8mm}
+  .doc2 .art ol{margin:0; padding-left:6mm; font-size:11.5px; line-height:1.7}
+  .doc2 .art li{margin:0 0 0.4mm; text-align:justify}
+  .doc2 .rh{
+    font-size:12px; font-weight:700; text-align:center; border:1px solid #000;
+    background:#f2f2f2; padding:1mm; margin:0 0 2mm;
+  }
+  .doc2 .rh2{font-size:12px; font-weight:700; margin:6mm 0 1.5mm}
+  .doc2 .ctbl{width:100%; border-collapse:collapse; table-layout:fixed}
+  .doc2 .ctbl th,.doc2 .ctbl td{
+    border:1px solid #000; padding:1.2mm 2mm; font-size:11.5px; height:8mm; vertical-align:middle;
+  }
+  .doc2 .ctbl th{width:38mm; background:#f2f2f2; font-weight:400; text-align:center; white-space:nowrap}
+  .doc2 .ctbl td{font-family:"Yu Gothic","Meiryo",sans-serif}
+  /* 記入欄は薄い黄色（雛形と同じ） */
+  .doc2 .fillc{background:#fffde7; font-weight:700}
+  .doc2 .fillc:empty::after{content:"　"}
+  .doc2 .closing{font-size:11px; line-height:1.7; margin:6mm 0 4mm; text-align:justify}
+  .doc2 .cdate{font-size:12px; margin:0; letter-spacing:.1em}
+  .doc2 .stampmark{float:right; font-size:11px; margin-right:6mm}
 
   @media print{
     body{background:#fff}
@@ -144,6 +181,10 @@
     .doc{width:auto; min-height:auto; margin:0; box-shadow:none; padding:10mm 10mm}
     body.a5 .doc{width:246mm; min-height:auto; padding:3mm; zoom:.82}
     body.half .doc{width:246mm; min-height:181mm; padding:3mm; zoom:.82; box-shadow:none}
+    /* 契約書は印刷時だけ原寸に戻す（画面は縮小プレビュー） */
+    .doc2{box-shadow:none; margin:0}
+    body.ka3 .doc2{zoom:1 !important}
+    body.ka4 .doc2{zoom:.707 !important}
   }
 </style>
 </head>
@@ -154,7 +195,7 @@
     <div class="logo">大泉</div>
     <div>
       <h1>一般廃棄物 契約書類メーカー</h1>
-      <div class="sub">お申込みフォームの内容から、契約書管理システムの登録シートを作ります</div>
+      <div class="sub">フォームの入力内容から、契約登録シートと一般廃棄物収集運搬業務委託契約書を作ります</div>
     </div>
     <div class="spacer"></div>
     <span class="badge">社内用</span>
@@ -347,6 +388,19 @@
         </fieldset>
 
         <fieldset>
+          <legend>契約書に載せる内容<span class="tag">契約書のとき</span></legend>
+          <div class="grid">
+            <label class="f"><span class="lab">契約開始日</span><input id="keiyaku_start" type="date"></label>
+            <label class="f"><span class="lab">契約締結日</span><input id="teiketsu_bi" type="date"></label>
+            <label class="f full"><span class="lab">廃棄物の種類</span>
+              <input id="k_shurui" value="事業系一般廃棄物（可燃ごみ・不燃ごみ）"></label>
+            <label class="f full"><span class="lab">収集頻度</span>
+              <input id="k_hindo" value="週6回（月曜日〜土曜日）"></label>
+          </div>
+          <div class="hint">収集時間帯は 24:00〜8:00（日曜朝・1/1〜1/4は休止）で固定です。</div>
+        </fieldset>
+
+        <fieldset>
           <legend>社内担当・備考</legend>
           <div class="grid">
             <label class="f"><span class="lab">営業</span><input id="tan_eigyo"></label>
@@ -362,15 +416,28 @@
     <!-- ============ プレビュー ============ -->
     <div class="panel">
       <div class="toolbar noprint">
-        <button type="button" class="primary" id="btnPrint">登録シートをPDFにする</button>
-        <span style="display:inline-flex; align-items:center; gap:6px; margin-left:4px">
-          <span class="hint" style="margin:0">用紙</span>
-          <button type="button" class="sizebtn" data-size="half">A4に半分（切って使う）</button>
-          <button type="button" class="sizebtn" data-size="a5">A5横の用紙</button>
-          <button type="button" class="sizebtn" data-size="a4">A4まるごと</button>
+        <span style="display:inline-flex; align-items:center; gap:6px">
+          <span class="hint" style="margin:0">書類</span>
+          <button type="button" class="docbtn" data-doc="sheet">登録シート</button>
+          <button type="button" class="docbtn" data-doc="stamp">契約書（押印）</button>
+          <button type="button" class="docbtn" data-doc="denshi">契約書（電子）</button>
         </span>
         <span style="flex:1"></span>
-        <span class="hint" style="margin:0">契約書本体は様式をいただき次第、追加します</span>
+        <button type="button" class="primary" id="btnPrint">PDFにする</button>
+      </div>
+      <div class="toolbar noprint" id="paperBar">
+        <span style="display:inline-flex; align-items:center; gap:6px; flex-wrap:wrap">
+          <span class="hint" style="margin:0">用紙</span>
+          <span id="sheetSizes" style="display:inline-flex; gap:6px">
+            <button type="button" class="sizebtn" data-size="half">A4に半分（切って使う）</button>
+            <button type="button" class="sizebtn" data-size="a5">A5横の用紙</button>
+            <button type="button" class="sizebtn" data-size="a4">A4まるごと</button>
+          </span>
+          <span id="keiyakuSizes" class="hide" style="display:none; gap:6px">
+            <button type="button" class="sizebtn" data-size="a3">A3横（原寸）</button>
+            <button type="button" class="sizebtn" data-size="a4y">A4横（縮小）</button>
+          </span>
+        </span>
       </div>
       <style id="pageSize">@page{size:A5 landscape; margin:0}</style>
       <div class="stage">
@@ -437,7 +504,48 @@
             <tr><td colspan="20" class="ltd blank" id="r_biko"></td></tr>
           </table>
         </div>
-        <div class="cutline">✂ ここで切ると A4 のちょうど半分になります</div>
+<div class="doc2 hide" id="doc2">
+          <div class="c-left">
+            <h2 class="ct">一般廃棄物収集運搬業務委託契約書</h2>
+            <p class="lead">委託者　<span class="fill" id="c_kou1"></span>　（以下「甲」という。）と受託者 大泉衛生株式会社（以下「乙」という。）は、甲の事業活動に伴い排出される事業系一般廃棄物の収集運搬業務について、以下のとおり契約を締結する。</p>
+            <div class="art"><div class="ah">第1条（委託業務）</div><ol><li>甲は、甲の事業所から排出される事業系一般廃棄物の収集運搬を乙に委託し、乙はこれを受託する。</li><li>乙は、大阪市一般廃棄物収集運搬業許可（第003-123号）に基づき本業務を遂行する。</li><li>産業廃棄物は本契約の対象外とする。甲が産業廃棄物の収集運搬を希望する場合は、別途産業廃棄物収集運搬契約を締結するものとし、本契約の範囲に含めてはならない。</li></ol></div><div class="art"><div class="ah">第2条（収集場所・頻度）</div><ol><li>収集場所・収集日時・収集頻度は、本契約書「収集条件」欄のとおりとする。</li><li>変更が生じた場合、甲は速やかに乙に通知する。</li><li>収集時間帯は24:00〜8:00とする。但し日曜朝、1/1〜1/4は収集を行わない。</li></ol></div><div class="art"><div class="ah">第3条（料金・支払）</div><ol><li>委託料金は本契約書「料金」欄のとおり（税別）。</li><li>乙は毎月末日締めで請求書を発行する。支払方法は本契約書「支払方法」欄のとおりとし、口座振替の場合は翌月22日に甲の指定口座から引き落とすものとする。銀行振込の場合は翌月末日までに乙の指定口座へ振込むものとし、振込手数料は甲負担とする。</li><li>料金改定が必要な場合は、甲乙協議のうえ決定する。</li></ol></div><div class="art"><div class="ah">第4条（契約期間）</div><ol><li>契約期間は本契約書記載の開始日から1年間とする。</li><li>期間満了1ヶ月前までに書面による解約の申出がない場合、同一条件で1年間自動更新する。</li></ol></div><div class="art"><div class="ah">第5条（甲の義務）</div><ol><li>甲は大阪市の分別基準に従い、廃棄物を適正に分別し、所定の場所・時間に排出する。</li><li>産業廃棄物・危険物・有害物質を事業系一般廃棄物に混入させてはならない。</li></ol></div><div class="art"><div class="ah">第6条（乙の義務）</div><ol><li>乙は廃棄物処理法及び大阪市条例を遵守し、適正に収集運搬する。</li><li>収集した廃棄物は大阪市指定の処理施設に搬入する。</li></ol></div><div class="art"><div class="ah">第7条（解除）</div><ol><li>甲又は乙は、相手方が契約に違反し催告後も是正しない場合、破産等の申立てがあった場合、又は許可の取消し等を受けた場合、直ちに本契約を解除できる。</li><li>甲又は乙は、1ヶ月前に書面で通知し解約できる。</li></ol></div><div class="art"><div class="ah">第8条（一般条項）</div><ol><li>秘密保持：甲乙は本契約に関し知り得た秘密を第三者に漏洩しない。</li><li>損害賠償：本契約に違反し相手方に損害を与えた場合はその損害を賠償する。</li><li>反社排除：甲乙は自ら及びその役員等が反社会的勢力に該当しないことを保証する。</li><li>協議：本契約に定めのない事項は甲乙協議のうえ解決する。</li><li>管轄：本契約に関する紛争は大阪地方裁判所を専属的合意管轄裁判所とする。</li></ol></div><div id="c_extra"></div>
+          </div>
+          <div class="c-right">
+            <div class="rh">【収集条件・料金】</div>
+            <table class="ctbl">
+              <tr><th>収集先事業所名</th><td class="fillc" id="c_jname"></td></tr>
+              <tr><th>収集先事業所住所</th><td class="fillc" id="c_jaddr"></td></tr>
+              <tr><th>管理担当者</th><td class="fillc" id="c_tanto"></td></tr>
+              <tr><th>廃棄物の種類</th><td id="c_shurui"></td></tr>
+              <tr><th>収集頻度</th><td id="c_hindo"></td></tr>
+              <tr><th>収集時間帯</th><td>24:00〜8:00（日曜朝・1/1〜1/4は休止）</td></tr>
+              <tr><th>月額料金（税別）</th><td class="fillc" id="c_gaku"></td></tr>
+              <tr><th>支払方法</th><td class="fillc" id="c_pay"></td></tr>
+              <tr><th>契約開始日</th><td class="fillc" id="c_start"></td></tr>
+            </table>
+
+            <div class="rh2">【甲（委託者）】</div>
+            <table class="ctbl">
+              <tr><th>住所</th><td class="fillc" id="c_haddr"></td></tr>
+              <tr><th>名称</th><td class="fillc" id="c_hname"></td></tr>
+              <tr><th>代表者</th><td class="fillc" id="c_hdaihyo"></td></tr>
+              <tr><th>TEL</th><td class="fillc" id="c_htel"></td></tr>
+            </table>
+
+            <div class="rh2">【乙（受託者）】</div>
+            <table class="ctbl">
+              <tr><th>住所</th><td>〒546-0032 大阪市東住吉区東田辺3-26-31</td></tr>
+              <tr><th>名称</th><td>大泉衛生株式会社</td></tr>
+              <tr><th>代表者</th><td id="c_otsu_daihyo">代表取締役 木村 元</td></tr>
+              <tr><th>TEL</th><td>06-6696-6789</td></tr>
+              <tr><th>許可</th><td>大阪市一般廃棄物収集運搬業 第003-123号</td></tr>
+            </table>
+
+            <p class="closing" id="c_closing"></p>
+            <p class="cdate" id="c_date"></p>
+          </div>
+        </div>
+                <div class="cutline">✂ ここで切ると A4 のちょうど半分になります</div>
       </div>
     </div>
   </div>
@@ -459,7 +567,7 @@ const CUST = ['h_name','h_addr','h_tel','daihyo','j_name','j_bldg','j_addr','j_t
               'j_tanto','kaishi','shiharai','s_name','s_addr','s_tel','keiri','keiri_tel',
               's_mail','tanto_name','tanto_yaku','tanto_tel','tanto_mail','biko'];
 /* 大泉衛生が入れる項目 */
-const OWN  = ['shurui_other',
+const OWN  = ['shurui_other','keiyaku_start','teiketsu_bi','k_shurui','k_hindo',
               'tokui_no','genba_no','keiyaku_tanto','gyoshu_no','kubun','kubun_other','s_bldg',
               'keiyaku_gaku','zei','shime','shime_hi','shiharai_tsuki','shiharai_hi',
               'shiharai_hi2','shiharai_hoho','furikomi','moushikomi','kaishi_made','shukin',
@@ -594,8 +702,96 @@ function render(){
     v('bikou_shanai') || ''
   ], '　／　')));
 
+  renderKeiyaku();
   save();
 }
+
+/* --- 契約書の描画 --- */
+const ART_E = `<div class="art"><div class="ah">第9条（代理人による契約締結）</div><ol>` +
+  `<li>甲は、甲の代理人（以下「甲代理人」という。）をもって本契約を締結できる。</li>` +
+  `<li>甲は甲代理人に正当な権限を授与していることを表明し保証する。</li>` +
+  `<li>甲代理人による締結は甲本人と同一の効力を有する。</li>` +
+  `<li>乙は権限確認のため以下の提出を求めることができる。<br>　(1) 委任状（記名押印又は電子署名あり）<br>　(2) 契約締結権限を証する書面の写し<br>　(3) 甲の代表者からの権限確認メール</li>` +
+  `</ol></div><div class="art"><div class="ah">第10条（電子データの保存義務）</div><ol>` +
+  `<li>本契約の電子データは、電子帳簿保存法に基づき、甲乙それぞれが7年間電子的に保存する。</li>` +
+  `<li>訂正又は削除の履歴が確認できる状態で保存し、真正性を確保する。</li></ol></div>`;
+
+const CLOSE_STAMP = '本契約締結の証として本書1通を作成し、甲乙記名押印のうえ、原本は甲が保管し、乙は複写機によるコピーを保存するものとする。';
+const CLOSE_DENSHI = '本契約は電子的方法により締結され、甲乙双方の電子的同意をもって書面と同等の効力を有する（電子署名法第3条）。';
+
+function wareki(s){
+  const t = ymd(s);
+  if(!t) return '令和　　年　　月　　日';
+  const n = t.y - 2018;
+  return '令和　' + (n === 1 ? '元' : n) + '　年　' + t.m + '　月　' + t.d + '　日';
+}
+
+function renderKeiyaku(){
+  if(!$('doc2')) return;
+  const stamp = docType === 'stamp';
+  txt('c_kou1',  v('h_name'));
+  txt('c_jname', join([v('j_name'), v('j_bldg')], '　'));
+  txt('c_jaddr', v('j_addr'));
+  txt('c_tanto', v('j_tanto'));
+  txt('c_shurui', v('k_shurui'));
+  txt('c_hindo',  v('k_hindo'));
+  cell('c_gaku', v('keiyaku_gaku')
+    ? esc(Number(String(v('keiyaku_gaku')).replace(/[^\d]/g,'')||0).toLocaleString('ja-JP')) + '　円（税別）'
+    : '');
+  const pay = v('shiharai_hoho') || PAY_MAP[v('shiharai')] || '';
+  txt('c_pay', pay === '自動引落' ? '口座振替（当月末締め・翌月22日引き落とし）'
+             : pay === '振込'     ? '銀行振込（当月末締め・翌月末日までにお振込み）'
+             : pay);
+  txt('c_start', v('keiyaku_start') ? jdate(v('keiyaku_start')) : '', '　　年　　月　　日');
+
+  txt('c_haddr',   v('h_addr'));
+  txt('c_hname',   v('h_name'));
+  cell('c_hdaihyo', (v('daihyo') ? esc(v('daihyo')) : '')
+    + (stamp ? '<span class="stampmark">㊞</span>' : ''));
+  txt('c_htel',    v('h_tel'));
+
+  $('c_otsu_daihyo').innerHTML = '代表取締役 木村 元'
+    + (stamp ? '<span class="stampmark">㊞</span>' : '');
+  $('c_extra').innerHTML  = stamp ? '' : ART_E;
+  $('c_closing').textContent = stamp ? CLOSE_STAMP : CLOSE_DENSHI;
+  $('c_date').textContent    = wareki(v('teiketsu_bi'));
+}
+
+/* --- 書類の切り替え --- */
+let docType = 'sheet';
+function setDoc(type){
+  docType = type;
+  const sheet = type === 'sheet';
+  $('doc').classList.toggle('hide', !sheet);
+  $('doc2').classList.toggle('hide', sheet);
+  document.querySelector('.cutline').style.display = sheet ? '' : 'none';
+  $('sheetSizes').style.display   = sheet ? 'inline-flex' : 'none';
+  $('keiyakuSizes').style.display = sheet ? 'none' : 'inline-flex';
+  $('keiyakuSizes').classList.toggle('hide', sheet);
+  document.querySelectorAll('.docbtn').forEach(b => b.classList.toggle('on', b.dataset.doc === type));
+  $('btnPrint').textContent = sheet ? '登録シートをPDFにする'
+    : (type === 'stamp' ? '契約書（押印用）をPDFにする' : '契約書（電子用）をPDFにする');
+  if(sheet) setSize(sheetSize); else setKeiyakuSize(keiyakuSize);
+  renderKeiyaku();
+  try{ localStorage.setItem('daisen_ippan_doctype', type); }catch(e){}
+}
+let keiyakuSize = 'a3';
+function setKeiyakuSize(size){
+  keiyakuSize = size;
+  $('pageSize').textContent = size === 'a3'
+    ? '@page{size:A3 landscape; margin:0}'
+    : '@page{size:A4 landscape; margin:0}';
+  // 画面は縮小して全体を見せ、印刷は原寸（A3横=100%／A4横=70.7%）にする
+  document.body.classList.toggle('ka3', size === 'a3');
+  document.body.classList.toggle('ka4', size !== 'a3');
+  document.querySelectorAll('#keiyakuSizes .sizebtn').forEach(b =>
+    b.classList.toggle('on', b.dataset.size === size));
+  try{ localStorage.setItem('daisen_ippan_keiyakusize', size); }catch(e){}
+}
+document.querySelectorAll('.docbtn').forEach(b =>
+  b.addEventListener('click', () => setDoc(b.dataset.doc)));
+document.querySelectorAll('#keiyakuSizes .sizebtn').forEach(b =>
+  b.addEventListener('click', () => setKeiyakuSize(b.dataset.size)));
 
 /* --- 保存・復元 --- */
 function save(){
@@ -646,21 +842,29 @@ async function loadRecord(id){
 /* --- 用紙サイズ（A4 / A5＝A4の半分） --- */
 const SIZE_STORE = 'daisen_ippan_maker_size';
 function setSize(size){
+  sheetSize = size;
   document.body.classList.toggle('a5',   size === 'a5');
   document.body.classList.toggle('half', size === 'half');
   // A5用紙のときだけ用紙指定を変える。「A4に半分」はA4用紙に出して切る
   $('pageSize').textContent = size === 'a5'
     ? '@page{size:A5 landscape; margin:0}'
     : '@page{size:A4 portrait; margin:0}';
-  document.querySelectorAll('.sizebtn').forEach(b =>
+  document.querySelectorAll('#sheetSizes .sizebtn').forEach(b =>
     b.classList.toggle('on', b.dataset.size === size));
   try{ localStorage.setItem(SIZE_STORE, size); }catch(e){}
 }
-document.querySelectorAll('.sizebtn').forEach(b =>
+document.querySelectorAll('#sheetSizes .sizebtn').forEach(b =>
   b.addEventListener('click', () => setSize(b.dataset.size)));
-let savedSize = 'half';
-try{ savedSize = localStorage.getItem(SIZE_STORE) || 'half'; }catch(e){}
-setSize(savedSize);
+
+let sheetSize = 'half';
+try{
+  sheetSize   = localStorage.getItem(SIZE_STORE) || 'half';
+  keiyakuSize = localStorage.getItem('daisen_ippan_keiyakusize') || 'a3';
+}catch(e){}
+setSize(sheetSize);
+let savedDoc = 'sheet';
+try{ savedDoc = localStorage.getItem('daisen_ippan_doctype') || 'sheet'; }catch(e){}
+setDoc(savedDoc);
 
 /* --- 操作 --- */
 $('btnPrint').addEventListener('click', () => window.print());
