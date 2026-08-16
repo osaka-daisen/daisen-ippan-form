@@ -204,7 +204,6 @@
           <div style="margin-top:10px">
             <span class="lab" style="display:block; font-size:11.5px; color:var(--sub); font-weight:700; margin-bottom:5px">ごみの種類</span>
             <div class="checks" id="gomiChecks">
-              <label><input type="checkbox" value="生ごみ（厨芥）">生ごみ（厨芥）</label>
               <label><input type="checkbox" value="紙くず">紙くず</label>
               <label><input type="checkbox" value="木くず">木くず</label>
               <label><input type="checkbox" value="繊維くず">繊維くず</label>
@@ -226,10 +225,13 @@
             <label class="f"><span class="lab">区分</span>
               <select id="kubun">
                 <option value=""></option>
-                <option>新規</option><option>変更</option><option>再契約</option><option>その他</option>
+                <option>新規</option><option>地盤</option><option>ｵｰﾅｰ変更</option>
+                <option>社名変更</option><option>書換</option><option>値上</option>
+                <option>値下</option><option>その他</option>
               </select>
             </label>
             <label class="f"><span class="lab">その他内容</span><input id="kubun_other"></label>
+            <label class="f full"><span class="lab">請求先 ビル・マンション名</span><input id="s_bldg"></label>
           </div>
         </fieldset>
 
@@ -246,10 +248,10 @@
             <label class="f"><span class="lab">〆日</span>
               <select id="shime">
                 <option value=""></option>
-                <option>末日</option><option>20日</option><option>25日</option><option>その他</option>
+                <option>末日</option><option>日付指定</option>
               </select>
             </label>
-            <label class="f"><span class="lab">〆日（その他の日付）</span><input id="shime_hi"></label>
+            <label class="f"><span class="lab">〆日（日付指定のとき）</span><input id="shime_hi" placeholder="20"></label>
             <label class="f"><span class="lab">支払月</span>
               <select id="shiharai_tsuki">
                 <option value=""></option>
@@ -259,24 +261,33 @@
             <label class="f"><span class="lab">支払日</span>
               <select id="shiharai_hi">
                 <option value=""></option>
-                <option>末日</option><option>10日</option><option>15日</option><option>20日</option><option>その他</option>
+                <option>末日</option><option>日付指定</option>
               </select>
             </label>
-            <label class="f"><span class="lab">支払日（その他の日付）</span><input id="shiharai_hi2"></label>
+            <label class="f"><span class="lab">支払日（日付指定のとき）</span><input id="shiharai_hi2" placeholder="22"></label>
             <label class="f"><span class="lab">支払方法</span>
               <select id="shiharai_hoho">
                 <option value=""></option>
-                <option>口座振替</option><option>銀行振込</option><option>集金（現金）</option>
+                <option>振込</option><option>自動引落</option><option>集金</option>
               </select>
             </label>
             <label class="f full"><span class="lab">振込人名</span><input id="furikomi"></label>
             <label class="f"><span class="lab">申込用紙</span>
               <select id="moushikomi">
                 <option value=""></option>
-                <option>受領済</option><option>未受領</option><option>不要</option>
+                <option>渡し済</option><option>郵送</option>
               </select>
             </label>
-            <label class="f"><span class="lab">開始するまで</span><input id="kaishi_made" placeholder="約2週間"></label>
+            <label class="f"><span class="lab">開始するまで</span>
+              <select id="kaishi_made">
+                <option value=""></option>
+                <option>振込</option><option>集金</option>
+              </select>
+            </label>
+            <label class="f full"><span class="lab">集金可能時間帯</span><input id="shukin" placeholder="平日 14:00〜17:00"></label>
+          </div>
+          <div class="hint">
+            お客様が「口座振替」を選ばれた場合は<b>自動引落</b>、「銀行振込」なら<b>振込</b>が自動で入ります。
           </div>
         </fieldset>
 
@@ -294,14 +305,20 @@
           <legend>サービス・回収</legend>
           <div class="grid">
             <label class="f"><span class="lab">無料サービス期間</span><input id="muryo" placeholder="1か月"></label>
-            <label class="f"><span class="lab">バケツ</span><input id="baketsu" placeholder="2個貸出"></label>
+            <label class="f"><span class="lab">バケツ</span>
+              <select id="baketsu"><option value=""></option><option>無</option><option>有</option></select>
+            </label>
+            <label class="f"><span class="lab">日曜回収</span>
+              <select id="nichiyou"><option value=""></option><option>無</option><option>有</option></select>
+            </label>
+            <label class="f"><span class="lab">年始回収</span>
+              <select id="nenshi"><option value=""></option><option>無</option><option>有</option></select>
+            </label>
+            <label class="f"><span class="lab">年末加算</span>
+              <select id="nenmatsu"><option value=""></option><option>なし</option><option>あり</option></select>
+            </label>
             <label class="f"><span class="lab">12月加算額（円）</span><input id="kasan12" inputmode="numeric"></label>
             <label class="f"><span class="lab">1月加算額（円）</span><input id="kasan1" inputmode="numeric"></label>
-          </div>
-          <div class="checks" style="margin-top:9px" id="svcChecks">
-            <label><input type="checkbox" value="日曜回収">日曜回収</label>
-            <label><input type="checkbox" value="年始回収">年始回収</label>
-            <label><input type="checkbox" value="年末加算">年末加算</label>
           </div>
         </fieldset>
 
@@ -432,11 +449,15 @@ const CUST = ['h_name','h_addr','h_tel','daihyo','j_name','j_bldg','j_addr','j_t
               's_mail','tanto_name','tanto_yaku','tanto_tel','tanto_mail','biko'];
 /* 大泉衛生が入れる項目（見積時に決めた内容を含む） */
 const OWN  = ['gyoshu','ryo','kaisu','youbi','teikyu','eigyo_time','gomi_ba','shurui_other',
-              'tokui_no','genba_no','keiyaku_tanto','gyoshu_no','kubun','kubun_other',
+              'tokui_no','genba_no','keiyaku_tanto','gyoshu_no','kubun','kubun_other','s_bldg',
               'keiyaku_gaku','zei','shime','shime_hi','shiharai_tsuki','shiharai_hi',
-              'shiharai_hi2','shiharai_hoho','furikomi','moushikomi','kaishi_made',
+              'shiharai_hi2','shiharai_hoho','furikomi','moushikomi','kaishi_made','shukin',
               'shokai_shu','shokai_nyu','shokai_bun','shaban','muryo','baketsu',
-              'kasan12','kasan1','tan_eigyo','tan_kanri','tan_jimu','bikou_shanai'];
+              'nichiyou','nenshi','nenmatsu','kasan12','kasan1',
+              'tan_eigyo','tan_kanri','tan_jimu','bikou_shanai'];
+
+/* お客様が選んだ支払方法 → 契約書管理システムの語彙 */
+const PAY_MAP = { '口座振替': '自動引落', '銀行振込': '振込', '集金（現金）': '集金' };
 const INPUTS = CUST.concat(OWN);
 
 /* --- 表示ヘルパー --- */
@@ -477,7 +498,8 @@ function render(){
 
   // 請求先が空なら「ご契約者と同じ」と出す
   put('d_sname', v('s_name'), v('h_name') ? 'ご契約者と同じ（' + v('h_name') + '）' : '—');
-  put('d_saddr', v('s_addr'), v('h_addr') ? 'ご契約者と同じ（' + v('h_addr') + '）' : '—');
+  put('d_saddr', join([v('s_addr') || (v('h_addr') ? 'ご契約者と同じ（' + v('h_addr') + '）' : ''),
+                       v('s_bldg')], '　'));
   put('d_stel',  v('s_tel'),  v('h_tel')  ? 'ご契約者と同じ（' + v('h_tel')  + '）' : '—');
   put('d_gyono', v('gyoshu_no'));
   put('d_aite',  v('tanto_name'));
@@ -485,10 +507,16 @@ function render(){
 
   put('d_gaku',  yen(v('keiyaku_gaku')));
   put('d_zei',   v('zei'));
-  put('d_shime', join([v('shime'), v('shime_hi')], '／'));
-  put('d_shiharaibi', join([v('shiharai_tsuki'), v('shiharai_hi'), v('shiharai_hi2')], '／'));
-  // 大泉で決めた支払方法。空ならお客様がフォームで選んだ方法を出す
-  put('d_hoho', v('shiharai_hoho') || (v('shiharai') ? v('shiharai') + '（お客様のご希望）' : ''));
+  put('d_shime', v('shime') === '日付指定' ? (v('shime_hi') ? v('shime_hi') + '日' : '日付指定')
+                                          : v('shime'));
+  put('d_shiharaibi', join([
+        v('shiharai_tsuki'),
+        v('shiharai_hi') === '日付指定' ? (v('shiharai_hi2') ? v('shiharai_hi2') + '日' : '日付指定')
+                                        : v('shiharai_hi')
+      ], '　'));
+  // 大泉で決めた支払方法。空ならお客様がフォームで選んだ方法を読み替えて出す
+  const payAuto = PAY_MAP[v('shiharai')] || '';
+  put('d_hoho', v('shiharai_hoho') || (payAuto ? payAuto + '（お客様のご希望）' : ''));
   put('d_furikomi', v('furikomi'));
   put('d_moushi', v('moushikomi'));
   put('d_made',  v('kaishi_made'));
@@ -505,8 +533,11 @@ function render(){
 
   put('d_muryo',   v('muryo'));
   put('d_baketsu', v('baketsu'));
-  const svc = [...document.querySelectorAll('#svcChecks input:checked')].map(b=>b.value);
-  put('d_svc', svc.join('　／　'), 'なし');
+  put('d_svc', join([
+        v('nichiyou') ? '日曜回収：' + v('nichiyou') : '',
+        v('nenshi')   ? '年始回収：' + v('nenshi')   : '',
+        v('nenmatsu') ? '年末加算：' + v('nenmatsu') : ''
+      ], '　／　'), '—');
   put('d_kasan12', yen(v('kasan12')));
   put('d_kasan1',  yen(v('kasan1')));
 
@@ -527,10 +558,7 @@ function render(){
 
 /* --- 保存・復元 --- */
 function save(){
-  const o = {
-    _svc:  [...document.querySelectorAll('#svcChecks input')].map(b=>b.checked),
-    _gomi: [...document.querySelectorAll('#gomiChecks input')].map(b=>b.checked)
-  };
+  const o = { _gomi: [...document.querySelectorAll('#gomiChecks input')].map(b=>b.checked) };
   INPUTS.forEach(id => o[id] = v(id));
   try{ localStorage.setItem(STORE, JSON.stringify(o)); }catch(e){}
 }
@@ -538,12 +566,11 @@ function restore(){
   let o; try{ o = JSON.parse(localStorage.getItem(STORE)||'null'); }catch(e){ return; }
   if(!o) return;
   INPUTS.forEach(id => { if(o[id]!=null && $(id)) $(id).value = o[id]; });
-  [['_svc','#svcChecks'],['_gomi','#gomiChecks']].forEach(([k,sel])=>{
-    if(!Array.isArray(o[k])) return;
-    [...document.querySelectorAll(sel + ' input')].forEach((b,i)=>{
-      if(o[k][i]!=null) b.checked = o[k][i];
+  if(Array.isArray(o._gomi)){
+    [...document.querySelectorAll('#gomiChecks input')].forEach((b,i)=>{
+      if(o._gomi[i]!=null) b.checked = o._gomi[i];
     });
-  });
+  }
 }
 
 /* --- 台帳からの読み込み --- */
@@ -566,6 +593,8 @@ async function loadRecord(id){
     if(!j.ok){ msg('読み込めませんでした：' + (j.error || '不明なエラー'), 'ng'); return; }
     const d = j.data || {};
     CUST.forEach(k => { if(d[k] && $(k)) $(k).value = d[k]; });
+    // お客様の希望をシステムの語彙に読み替えて、支払方法をあらかじめ入れておく
+    if(!v('shiharai_hoho') && PAY_MAP[d.shiharai]) $('shiharai_hoho').value = PAY_MAP[d.shiharai];
     render();
     msg('「' + (d.h_name || '') + '」を読み込みました。大泉衛生で決める欄をご入力ください。', 'ok');
   }catch(e){
@@ -582,7 +611,7 @@ $('btnLoad').addEventListener('click', () => {
 $('btnClear').addEventListener('click', () => {
   if(!confirm('入力した内容をすべて消します。よろしいですか？')) return;
   INPUTS.forEach(id => { if($(id)) $(id).value = ''; });
-  document.querySelectorAll('#svcChecks input,#gomiChecks input').forEach(b=>b.checked=false);
+  document.querySelectorAll('#gomiChecks input').forEach(b=>b.checked=false);
   localStorage.removeItem(STORE);
   msg('');
   render();
