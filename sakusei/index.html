@@ -214,18 +214,8 @@
         </fieldset>
 
         <fieldset>
-          <legend>見積時に決めた内容<span class="tag">大泉衛生で記入</span></legend>
-          <div class="grid">
-            <label class="f"><span class="lab">業種</span><input id="gyoshu" placeholder="飲食店"></label>
-            <label class="f"><span class="lab">1回あたりの量</span><input id="ryo" placeholder="45Lポリ袋 3袋"></label>
-            <label class="f"><span class="lab">収集回数</span><input id="kaisu" placeholder="週2回"></label>
-            <label class="f"><span class="lab">収集曜日</span><input id="youbi" placeholder="火・金"></label>
-            <label class="f"><span class="lab">定休日</span><input id="teikyu" placeholder="日曜・祝日"></label>
-            <label class="f"><span class="lab">営業時間</span><input id="eigyo_time" placeholder="11:00〜22:00"></label>
-            <label class="f full"><span class="lab">ごみを置く場所</span><input id="gomi_ba" placeholder="建物裏の勝手口横"></label>
-          </div>
-          <div style="margin-top:10px">
-            <span class="lab" style="display:block; font-size:11.5px; color:var(--sub); font-weight:700; margin-bottom:5px">ごみの種類</span>
+          <legend>ゴミの種類<span class="tag">大泉衛生で記入</span></legend>
+          <div>
             <div class="checks" id="gomiChecks">
               <label><input type="checkbox" value="紙くず">紙くず</label>
               <label><input type="checkbox" value="木くず">木くず</label>
@@ -235,7 +225,7 @@
             </div>
             <label class="f" style="margin-top:9px"><span class="lab">その他の内容</span><input id="shurui_other"></label>
           </div>
-          <div class="hint">お客様には聞いていない項目です。お見積りのときに把握した内容をご記入ください。</div>
+          <div class="hint">お見積りのときに把握した内容をご記入ください。</div>
         </fieldset>
 
         <fieldset>
@@ -460,8 +450,8 @@ const v = (id) => ($(id).value || '').trim();
 const CUST = ['h_name','h_addr','h_tel','daihyo','j_name','j_bldg','j_addr','j_tel',
               'j_tanto','kaishi','shiharai','s_name','s_addr','s_tel','keiri','keiri_tel',
               's_mail','tanto_name','tanto_yaku','tanto_tel','tanto_mail','biko'];
-/* 大泉衛生が入れる項目（見積時に決めた内容を含む） */
-const OWN  = ['gyoshu','ryo','kaisu','youbi','teikyu','eigyo_time','gomi_ba','shurui_other',
+/* 大泉衛生が入れる項目 */
+const OWN  = ['shurui_other',
               'tokui_no','genba_no','keiyaku_tanto','gyoshu_no','kubun','kubun_other','s_bldg',
               'keiyaku_gaku','zei','shime','shime_hi','shiharai_tsuki','shiharai_hi',
               'shiharai_hi2','shiharai_hoho','furikomi','moushikomi','kaishi_made','shukin',
@@ -590,12 +580,6 @@ function render(){
   txt('r_tasa', v('tasa'));
 
   cell('r_biko', esc(join([
-    v('kaisu') || v('youbi') ? '収集：' + join([v('kaisu'), v('youbi')], '　') : '',
-    v('ryo')        ? '量：' + v('ryo') : '',
-    v('teikyu')     ? '定休：' + v('teikyu') : '',
-    v('eigyo_time') ? '営業：' + v('eigyo_time') : '',
-    v('gomi_ba')    ? '置場：' + v('gomi_ba') : '',
-    v('gyoshu')     ? '業種：' + v('gyoshu') : '',
     v('kaishi')     ? '開始希望：' + v('kaishi') : '',
     v('keiri')      ? '経理：' + v('keiri') + (v('keiri_tel') ? '（' + v('keiri_tel') + '）' : '') : '',
     v('biko')       ? '要望：' + v('biko') : '',
