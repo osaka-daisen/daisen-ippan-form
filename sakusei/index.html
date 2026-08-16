@@ -168,24 +168,19 @@
             <label class="f full"><span class="lab">事業者住所</span><input id="h_addr"></label>
             <label class="f"><span class="lab">電話番号</span><input id="h_tel"></label>
             <label class="f"><span class="lab">代表者 役職・氏名</span><input id="daihyo"></label>
-            <label class="f"><span class="lab">業種</span><input id="gyoshu"></label>
             <label class="f"><span class="lab">現場名</span><input id="j_name"></label>
             <label class="f"><span class="lab">ビル・マンション名</span><input id="j_bldg"></label>
             <label class="f full"><span class="lab">現場住所</span><input id="j_addr"></label>
             <label class="f"><span class="lab">現場の電話番号</span><input id="j_tel"></label>
             <label class="f"><span class="lab">現場ご担当者名</span><input id="j_tanto"></label>
-            <label class="f full"><span class="lab">ごみを置く場所</span><input id="gomi_ba"></label>
-            <label class="f"><span class="lab">定休日</span><input id="teikyu"></label>
-            <label class="f"><span class="lab">営業時間</span><input id="eigyo_time"></label>
-            <label class="f full"><span class="lab">ごみの種類</span><input id="shurui"></label>
-            <label class="f"><span class="lab">その他の内容</span><input id="shurui_other"></label>
-            <label class="f"><span class="lab">1回あたりの量</span><input id="ryo"></label>
-            <label class="f"><span class="lab">希望の収集回数</span><input id="kaisu"></label>
-            <label class="f"><span class="lab">希望の曜日</span><input id="youbi"></label>
+            <label class="f"><span class="lab">回収開始のご希望日</span><input id="kaishi"></label>
+            <label class="f"><span class="lab">お支払い方法</span><input id="shiharai"></label>
             <label class="f full"><span class="lab">請求先名</span><input id="s_name"></label>
             <label class="f full"><span class="lab">請求先住所</span><input id="s_addr"></label>
             <label class="f"><span class="lab">請求先の電話番号</span><input id="s_tel"></label>
-            <label class="f"><span class="lab">集金に伺える時間帯</span><input id="shukin"></label>
+            <label class="f"><span class="lab">経理ご担当者名</span><input id="keiri"></label>
+            <label class="f"><span class="lab">経理ご担当者の電話番号</span><input id="keiri_tel"></label>
+            <label class="f full"><span class="lab">請求書送付先メール</span><input id="s_mail"></label>
             <label class="f"><span class="lab">ご担当者名</span><input id="tanto_name"></label>
             <label class="f"><span class="lab">ご担当者 役職</span><input id="tanto_yaku"></label>
             <label class="f"><span class="lab">ご担当者 電話番号</span><input id="tanto_tel"></label>
@@ -193,6 +188,32 @@
             <label class="f full"><span class="lab">ご要望・ご質問</span><textarea id="biko"></textarea></label>
           </div>
           <div class="hint">請求先が空欄のときは、登録シートに「ご契約者と同じ」と出ます。</div>
+        </fieldset>
+
+        <fieldset>
+          <legend>見積時に決めた内容<span class="tag">大泉衛生で記入</span></legend>
+          <div class="grid">
+            <label class="f"><span class="lab">業種</span><input id="gyoshu" placeholder="飲食店"></label>
+            <label class="f"><span class="lab">1回あたりの量</span><input id="ryo" placeholder="45Lポリ袋 3袋"></label>
+            <label class="f"><span class="lab">収集回数</span><input id="kaisu" placeholder="週2回"></label>
+            <label class="f"><span class="lab">収集曜日</span><input id="youbi" placeholder="火・金"></label>
+            <label class="f"><span class="lab">定休日</span><input id="teikyu" placeholder="日曜・祝日"></label>
+            <label class="f"><span class="lab">営業時間</span><input id="eigyo_time" placeholder="11:00〜22:00"></label>
+            <label class="f full"><span class="lab">ごみを置く場所</span><input id="gomi_ba" placeholder="建物裏の勝手口横"></label>
+          </div>
+          <div style="margin-top:10px">
+            <span class="lab" style="display:block; font-size:11.5px; color:var(--sub); font-weight:700; margin-bottom:5px">ごみの種類</span>
+            <div class="checks" id="gomiChecks">
+              <label><input type="checkbox" value="生ごみ（厨芥）">生ごみ（厨芥）</label>
+              <label><input type="checkbox" value="紙くず">紙くず</label>
+              <label><input type="checkbox" value="木くず">木くず</label>
+              <label><input type="checkbox" value="繊維くず">繊維くず</label>
+              <label><input type="checkbox" value="動植物性残渣">動植物性残渣</label>
+              <label><input type="checkbox" value="その他">その他</label>
+            </div>
+            <label class="f" style="margin-top:9px"><span class="lab">その他の内容</span><input id="shurui_other"></label>
+          </div>
+          <div class="hint">お客様には聞いていない項目です。お見積りのときに把握した内容をご記入ください。</div>
         </fieldset>
 
         <fieldset>
@@ -351,7 +372,7 @@
             <th>定休日</th><td id="d_teikyu"></td>
             <th>営業時間</th><td id="d_eigyotime"></td>
           </tr><tr>
-            <th>集金可能時間帯</th><td id="d_shukin"></td>
+            <th>経理ご担当者</th><td id="d_keiri"></td>
             <th>車番</th><td id="d_shaban"></td>
           </tr><tr>
             <th>初回収集日</th><td id="d_shokaishu"></td>
@@ -405,11 +426,13 @@ const STORE    = 'daisen_ippan_maker_v1';
 const $ = (id) => document.getElementById(id);
 const v = (id) => ($(id).value || '').trim();
 
-const CUST = ['h_name','h_addr','h_tel','daihyo','gyoshu','j_name','j_bldg','j_addr',
-              'j_tel','j_tanto','gomi_ba','teikyu','eigyo_time','shurui','shurui_other',
-              'ryo','kaisu','youbi','s_name','s_addr','s_tel','shukin',
-              'tanto_name','tanto_yaku','tanto_tel','tanto_mail','biko'];
-const OWN  = ['tokui_no','genba_no','keiyaku_tanto','gyoshu_no','kubun','kubun_other',
+/* お客様がフォームで入力する項目（?id= で自動的に入る） */
+const CUST = ['h_name','h_addr','h_tel','daihyo','j_name','j_bldg','j_addr','j_tel',
+              'j_tanto','kaishi','shiharai','s_name','s_addr','s_tel','keiri','keiri_tel',
+              's_mail','tanto_name','tanto_yaku','tanto_tel','tanto_mail','biko'];
+/* 大泉衛生が入れる項目（見積時に決めた内容を含む） */
+const OWN  = ['gyoshu','ryo','kaisu','youbi','teikyu','eigyo_time','gomi_ba','shurui_other',
+              'tokui_no','genba_no','keiyaku_tanto','gyoshu_no','kubun','kubun_other',
               'keiyaku_gaku','zei','shime','shime_hi','shiharai_tsuki','shiharai_hi',
               'shiharai_hi2','shiharai_hoho','furikomi','moushikomi','kaishi_made',
               'shokai_shu','shokai_nyu','shokai_bun','shaban','muryo','baketsu',
@@ -464,14 +487,15 @@ function render(){
   put('d_zei',   v('zei'));
   put('d_shime', join([v('shime'), v('shime_hi')], '／'));
   put('d_shiharaibi', join([v('shiharai_tsuki'), v('shiharai_hi'), v('shiharai_hi2')], '／'));
-  put('d_hoho',  v('shiharai_hoho'));
+  // 大泉で決めた支払方法。空ならお客様がフォームで選んだ方法を出す
+  put('d_hoho', v('shiharai_hoho') || (v('shiharai') ? v('shiharai') + '（お客様のご希望）' : ''));
   put('d_furikomi', v('furikomi'));
   put('d_moushi', v('moushikomi'));
   put('d_made',  v('kaishi_made'));
 
   put('d_teikyu',    v('teikyu'));
   put('d_eigyotime', v('eigyo_time'));
-  put('d_shukin',    v('shukin'));
+  put('d_keiri', join([v('keiri'), v('keiri_tel') ? '（' + v('keiri_tel') + '）' : ''], ''));
   put('d_shaban',    v('shaban'));
   put('d_shokaishu', jdate(v('shokai_shu')));
   put('d_shokainyu', join([jdate(v('shokai_nyu')),
@@ -486,7 +510,9 @@ function render(){
   put('d_kasan12', yen(v('kasan12')));
   put('d_kasan1',  yen(v('kasan1')));
 
-  put('d_shurui', join([v('shurui'), v('shurui_other') ? '（その他：' + v('shurui_other') + '）' : ''], ''));
+  const gomi = [...document.querySelectorAll('#gomiChecks input:checked')].map(b=>b.value);
+  put('d_shurui', join([gomi.join('・'),
+                        v('shurui_other') ? '（その他：' + v('shurui_other') + '）' : ''], ''));
   put('d_ryo',    v('ryo'));
   put('d_gyoshu', v('gyoshu'));
 
@@ -501,7 +527,10 @@ function render(){
 
 /* --- 保存・復元 --- */
 function save(){
-  const o = {_svc:[...document.querySelectorAll('#svcChecks input')].map(b=>b.checked)};
+  const o = {
+    _svc:  [...document.querySelectorAll('#svcChecks input')].map(b=>b.checked),
+    _gomi: [...document.querySelectorAll('#gomiChecks input')].map(b=>b.checked)
+  };
   INPUTS.forEach(id => o[id] = v(id));
   try{ localStorage.setItem(STORE, JSON.stringify(o)); }catch(e){}
 }
@@ -509,11 +538,12 @@ function restore(){
   let o; try{ o = JSON.parse(localStorage.getItem(STORE)||'null'); }catch(e){ return; }
   if(!o) return;
   INPUTS.forEach(id => { if(o[id]!=null && $(id)) $(id).value = o[id]; });
-  if(Array.isArray(o._svc)){
-    [...document.querySelectorAll('#svcChecks input')].forEach((b,i)=>{
-      if(o._svc[i]!=null) b.checked = o._svc[i];
+  [['_svc','#svcChecks'],['_gomi','#gomiChecks']].forEach(([k,sel])=>{
+    if(!Array.isArray(o[k])) return;
+    [...document.querySelectorAll(sel + ' input')].forEach((b,i)=>{
+      if(o[k][i]!=null) b.checked = o[k][i];
     });
-  }
+  });
 }
 
 /* --- 台帳からの読み込み --- */
@@ -552,7 +582,7 @@ $('btnLoad').addEventListener('click', () => {
 $('btnClear').addEventListener('click', () => {
   if(!confirm('入力した内容をすべて消します。よろしいですか？')) return;
   INPUTS.forEach(id => { if($(id)) $(id).value = ''; });
-  document.querySelectorAll('#svcChecks input').forEach(b=>b.checked=false);
+  document.querySelectorAll('#svcChecks input,#gomiChecks input').forEach(b=>b.checked=false);
   localStorage.removeItem(STORE);
   msg('');
   render();

@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="theme-color" content="#1f6f5c">
-<title>事業系ごみ 定期回収のお申込み｜大泉衛生株式会社</title>
+<title>ご契約手続きのご案内｜大泉衛生株式会社</title>
 <style>
   :root{
     --ink:#1a1a1a; --sub:#5b6470; --line:#d9dee5; --line2:#eef1f5;
     --bg:#f4f6f9; --card:#ffffff; --accent:#1f6f5c; --accent-d:#155445;
-    --warn:#b4451f; --chip:#eef4f2;
+    --warn:#b4451f; --red:#c0281e; --chip:#eef4f2;
   }
   *{box-sizing:border-box}
   body{
@@ -77,14 +77,28 @@
   .err{color:var(--warn); font-size:12.5px; font-weight:700; margin-top:5px; display:none}
   .err.show{display:block}
 
-  .checks{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:7px}
-  .checks label{
-    display:flex; align-items:center; gap:7px; padding:9px 11px; font-size:13.5px;
-    border:1px solid var(--line); border-radius:8px; background:#fff; cursor:pointer;
+  /* ===== お支払い方法の選択 ===== */
+  .pay{display:grid; gap:10px}
+  .payopt{
+    display:flex; align-items:flex-start; gap:11px; cursor:pointer;
+    border:2px solid var(--line); border-radius:10px; padding:14px 15px; background:#fff;
   }
-  .checks label:has(input:checked){background:var(--chip); border-color:var(--accent); font-weight:700; color:var(--accent-d)}
-  .checks input{width:auto; margin:0; flex:none; accent-color:var(--accent)}
-  .checks.days{grid-template-columns:repeat(auto-fill,minmax(84px,1fr))}
+  .payopt input{width:auto; margin:3px 0 0; flex:none; accent-color:var(--accent); transform:scale(1.25)}
+  .payopt .ttl{display:block; font-weight:700; font-size:16px}
+  .payopt .sub2{display:block; font-size:12.5px; color:var(--sub); margin-top:3px}
+  .payopt.reco{border-color:var(--red); background:#fff8f7}
+  .payopt.reco .ttl{color:var(--red); font-size:19px; letter-spacing:.02em}
+  .payopt.reco .badge{
+    display:inline-block; margin-left:9px; font-size:11.5px; font-weight:700; vertical-align:3px;
+    background:var(--red); color:#fff; border-radius:999px; padding:2px 11px;
+  }
+  .payopt.reco .push{
+    display:block; margin-top:7px; color:var(--red); font-weight:700; font-size:14.5px; line-height:1.75;
+  }
+  .payopt.reco .push .free{font-size:17px}
+  .payopt.reco .note{display:block; margin-top:5px; font-size:12.5px; color:#8a3a33; font-weight:400}
+  .payopt:has(input:checked){box-shadow:0 0 0 3px rgba(31,111,92,.15)}
+  .payopt.reco:has(input:checked){box-shadow:0 0 0 3px rgba(192,40,30,.18)}
 
   .samecheck{
     display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700;
@@ -107,8 +121,6 @@
     padding:11px 13px; border-radius:8px; margin-bottom:14px;
   }
   .notice.ok{background:var(--chip); border-color:#bfe0d6; color:var(--accent-d)}
-  .cond{display:none}
-  .cond.show{display:block}
 
   .confirm dl{margin:0; border-top:1px solid var(--line2)}
   .confirm .row{display:flex; gap:12px; padding:10px 2px; border-bottom:1px solid var(--line2); font-size:14px}
@@ -126,7 +138,11 @@
     display:flex; align-items:center; justify-content:center; font-size:34px; margin:0 auto 14px;
   }
   .done h2{font-size:19px; margin:0 0 8px}
-  .done p{color:var(--sub); font-size:14px; margin:0 auto; max-width:460px}
+  .done p{color:var(--sub); font-size:14px; margin:0 auto; max-width:470px}
+  .done .stamp{
+    margin:18px auto 0; max-width:470px; text-align:left; font-size:13px;
+    background:#fff8f7; border:1px solid #f0c9c5; color:#8a3a33; border-radius:8px; padding:11px 13px;
+  }
 
   footer.app{text-align:center; font-size:12px; color:var(--sub); padding:6px 0 0; line-height:1.9}
   .hide{display:none !important}
@@ -144,8 +160,8 @@
   <header class="app">
     <div class="logo">大泉</div>
     <div>
-      <h1>事業系ごみ　定期回収のお申込み</h1>
-      <div class="sub">大泉衛生株式会社</div>
+      <h1>ご契約手続きのご案内</h1>
+      <div class="sub">大泉衛生株式会社　／　事業系ごみ 定期回収</div>
     </div>
   </header>
 
@@ -155,14 +171,14 @@
     <div class="card noprint">
       <div class="cbody">
         <p class="lead" style="margin:0">
-          このたびはお引き合いをいただき、誠にありがとうございます。<br>
-          定期回収のご契約に必要な情報を、<strong>下記のフォームにご入力ください</strong>。
-          回収の曜日や料金は、いただいた内容をもとに弊社よりご提案いたします。
+          このたびはお見積りにご承諾いただき、誠にありがとうございます。<br>
+          <strong>契約書の作成に必要な情報</strong>を、下記のフォームにご入力ください。
+          回収の内容・料金はお打ち合わせのとおりですので、あらためてお伺いすることはございません。
         </p>
         <ul class="steps">
           <li><b>STEP 1</b>このフォームをご入力・送信</li>
-          <li><b>STEP 2</b>弊社から回収プランと<br>お見積りをご連絡</li>
-          <li><b>STEP 3</b>ご契約・回収開始</li>
+          <li><b>STEP 2</b>弊社で契約書を作成し<br>ご連絡</li>
+          <li><b>STEP 3</b>ご署名・回収開始</li>
         </ul>
       </div>
     </div>
@@ -178,7 +194,7 @@
 
         <div class="field">
           <label class="lab" for="f_hname">事業者名（法人名・屋号）<span class="req">必須</span></label>
-          <div class="guide">ご契約者様（会社・お店・個人）のお名前です。登記上の正式名称でご記入ください。
+          <div class="guide">ご契約者様（会社・お店・個人）のお名前です。契約書に記載しますので、登記上の正式名称でご記入ください。
 <span class="ex">【例】〇〇株式会社　／　居酒屋〇〇　／　山田 太郎（個人の場合）</span></div>
           <input id="f_hname" type="text" autocomplete="organization" placeholder="〇〇株式会社">
           <div class="err" id="e_hname">ご入力ください</div>
@@ -207,22 +223,6 @@
 <span class="ex">【例】代表取締役　山田 太郎</span></div>
           <input id="f_daihyo" type="text" placeholder="代表取締役　山田 太郎">
           <div class="err" id="e_daihyo">ご入力ください</div>
-        </div>
-
-        <div class="field">
-          <label class="lab" for="f_gyoshu">業種<span class="req">必須</span></label>
-          <div class="guide">出るごみの種類と量の見当をつけるためにお伺いしています。
-近いものをお選びください。</div>
-          <select id="f_gyoshu">
-            <option value="">選択してください</option>
-            <option>飲食店</option><option>スーパー・小売店</option>
-            <option>事務所・オフィス</option><option>病院・クリニック</option>
-            <option>介護・福祉施設</option><option>学校・保育園</option>
-            <option>工場・作業所</option><option>ホテル・旅館</option>
-            <option>民泊</option><option>マンション・アパート</option>
-            <option>美容室・理容室</option><option>その他</option>
-          </select>
-          <div class="err" id="e_gyoshu">お選びください</div>
         </div>
 
       </div>
@@ -263,8 +263,9 @@
 
         <div class="field">
           <label class="lab" for="f_jtel">現場の電話番号<span class="req">必須</span></label>
-          <div class="guide">回収当日にご連絡する場合がございます。ご契約者と同じで構いません。
-<span class="ex">【例】06-1234-5678</span></div>
+          <div class="guide">ごみ回収の遅延など、収集に関して現場へご連絡する際の番号です。
+ご契約者と同じで構いません。
+<span class="ex">【例】06-1234-5678　／　090-0000-0000</span></div>
           <input id="f_jtel" type="tel" inputmode="tel" placeholder="06-1234-5678">
           <div class="err" id="e_jtel">ご入力ください</div>
         </div>
@@ -279,90 +280,48 @@
         </div>
 
         <div class="field">
-          <label class="lab" for="f_place">ごみを置いていただく場所<span class="opt">任意</span></label>
-          <div class="guide">回収に伺う場所が分かるようにご記入ください。鍵や暗証番号が必要な場合もお書きください。
-<span class="ex">【例】建物裏の勝手口横　／　地下1階ごみ置き場（鍵が必要）</span></div>
-          <input id="f_place" type="text">
-        </div>
-
-        <div class="field">
-          <label class="lab" for="f_teikyu">定休日<span class="opt">任意</span></label>
-          <div class="guide">お休みの日には回収に伺わないよう調整します。
-<span class="ex">【例】日曜・祝日　／　毎週水曜　／　年中無休</span></div>
-          <input id="f_teikyu" type="text" placeholder="日曜・祝日">
-        </div>
-
-        <div class="field">
-          <label class="lab" for="f_eigyo">営業時間<span class="opt">任意</span></label>
-          <div class="guide">回収に伺う時間帯を決める参考にいたします。
-<span class="ex">【例】9:00〜18:00　／　17:00〜翌2:00</span></div>
-          <input id="f_eigyo" type="text" placeholder="9:00〜18:00">
+          <label class="lab" for="f_kaishi">回収開始のご希望日<span class="opt">任意</span></label>
+          <div class="guide">ご希望があればお書きください。お打ち合わせで決まっている場合は空欄で結構です。
+<span class="ex">【例】2026年9月1日　／　できるだけ早く</span></div>
+          <input id="f_kaishi" type="text">
         </div>
 
       </div>
     </div>
 
-    <!-- 3. 出るごみ -->
+    <!-- 3. お支払い -->
     <div class="card">
-      <div class="chead"><span class="n">3</span>出るごみについて</div>
+      <div class="chead"><span class="n">3</span>お支払い方法</div>
       <div class="cbody">
 
         <div class="field">
-          <label class="lab">ごみの種類<span class="req">必須</span></label>
-          <div class="guide">当てはまるものをすべてお選びください。分からない場合はおおよそで結構です。</div>
-          <div class="checks" id="gomiShurui">
-            <label><input type="checkbox" value="生ごみ（厨芥）">生ごみ（厨芥）</label>
-            <label><input type="checkbox" value="紙くず">紙くず</label>
-            <label><input type="checkbox" value="木くず">木くず</label>
-            <label><input type="checkbox" value="繊維くず">繊維くず</label>
-            <label><input type="checkbox" value="動植物性残渣">動植物性残渣</label>
-            <label><input type="checkbox" value="その他" id="chkOther">その他</label>
+          <label class="lab">お支払い方法をお選びください<span class="req">必須</span></label>
+          <div class="guide">ご契約後の毎月のお支払い方法です。</div>
+          <div class="pay" id="payWrap">
+
+            <label class="payopt reco">
+              <input type="radio" name="pay" value="口座振替" id="payKouza">
+              <span>
+                <span class="ttl">口座振替<span class="badge">おすすめ</span></span>
+                <span class="push">
+                  <span class="free">引き落とし手数料　無料</span><br>
+                  当月末締め　／　翌月22日引き落とし
+                  <span class="note">※ お申込みには銀行印（お届け印）が必要です。<br>
+                    　 用紙は契約書と一緒にお送りしますので、ご捺印のうえご返送ください。</span>
+                </span>
+              </span>
+            </label>
+
+            <label class="payopt">
+              <input type="radio" name="pay" value="銀行振込" id="payFurikomi">
+              <span>
+                <span class="ttl">銀行振込</span>
+                <span class="sub2">毎月、弊社指定口座へお振込みいただきます。振込手数料はお客様のご負担となります。</span>
+              </span>
+            </label>
+
           </div>
-          <div class="err" id="e_gomi">1つ以上お選びください</div>
-          <div class="field cond" id="otherWrap" style="margin-top:12px; margin-bottom:0">
-            <label class="lab" for="f_shurui_other" style="font-size:13px">その他の内容</label>
-            <input id="f_shurui_other" placeholder="例）廃食用油">
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="lab" for="f_ryo">1回あたりに出る量の目安<span class="req">必須</span></label>
-          <div class="guide">お見積りに使います。袋の数や容器の数でおおよそで構いません。
-<span class="ex">【例】45Lポリ袋 3袋　／　90Lポリ袋 1袋　／　20Lバケツ 2杯</span></div>
-          <input id="f_ryo" type="text" placeholder="45Lポリ袋 3袋">
-          <div class="err" id="e_ryo">ご入力ください</div>
-        </div>
-
-        <div class="field">
-          <label class="lab" for="f_kaisu">ご希望の収集回数<span class="opt">任意</span></label>
-          <div class="guide">ご相談のうえ決めますので、おおよそのご希望で構いません。</div>
-          <select id="f_kaisu">
-            <option value="">おまかせ・相談したい</option>
-            <option>週1回</option><option>週2回</option><option>週3回</option>
-            <option>週4回</option><option>週5回</option><option>週6回</option>
-            <option>毎日</option><option>月2回</option><option>月1回</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label class="lab">ご希望の曜日<span class="opt">任意</span></label>
-          <div class="guide">回収に来てほしい曜日があればお選びください。空欄でも構いません。</div>
-          <div class="checks days" id="gomiYoubi">
-            <label><input type="checkbox" value="月">月</label>
-            <label><input type="checkbox" value="火">火</label>
-            <label><input type="checkbox" value="水">水</label>
-            <label><input type="checkbox" value="木">木</label>
-            <label><input type="checkbox" value="金">金</label>
-            <label><input type="checkbox" value="土">土</label>
-            <label><input type="checkbox" value="日">日</label>
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="lab" for="f_kaishi">回収開始のご希望日<span class="opt">任意</span></label>
-          <div class="guide">お急ぎの場合はお書きください。
-<span class="ex">【例】2026年9月1日　／　できるだけ早く</span></div>
-          <input id="f_kaishi" type="text" placeholder="2026年9月1日">
+          <div class="err" id="e_pay">お選びください</div>
         </div>
 
       </div>
@@ -370,7 +329,7 @@
 
     <!-- 4. 請求について -->
     <div class="card">
-      <div class="chead"><span class="n">4</span>お支払い・請求について</div>
+      <div class="chead"><span class="n">4</span>請求書の送り先</div>
       <div class="cbody">
 
         <div class="notice noprint" style="margin-bottom:16px">
@@ -393,27 +352,23 @@
 
         <div class="field">
           <label class="lab" for="f_stel">請求先の電話番号<span class="opt">任意</span></label>
-          <div class="guide">経理ご担当につながる番号があればご記入ください。
+          <div class="guide">ご契約者の電話番号と異なる場合のみご記入ください。
 <span class="ex">【例】06-1234-5678</span></div>
           <input id="f_stel" type="tel" inputmode="tel" placeholder="（ご契約者と同じ場合は空欄）">
         </div>
 
         <div class="field">
-          <label class="lab" for="f_shiharai">ご希望のお支払い方法<span class="opt">任意</span></label>
-          <div class="guide">ご希望を伺ったうえで、あらためてご案内いたします。</div>
-          <select id="f_shiharai">
-            <option value="">相談したい・未定</option>
-            <option>口座振替</option>
-            <option>銀行振込</option>
-            <option>集金（現金）</option>
-          </select>
+          <label class="lab" for="f_keiri">経理ご担当者名<span class="opt">任意</span></label>
+          <div class="guide">請求や入金について、お問い合わせさせていただく方のお名前です。
+<span class="ex">【例】佐藤 花子</span></div>
+          <input id="f_keiri" type="text">
         </div>
 
-        <div class="field cond" id="shukinWrap">
-          <label class="lab" for="f_shukin">集金に伺える時間帯<span class="opt">任意</span></label>
-          <div class="guide">集金をご希望の場合、お伺いしやすい曜日・時間帯をお書きください。
-<span class="ex">【例】平日 14:00〜17:00　／　月末の午前中</span></div>
-          <input id="f_shukin" type="text">
+        <div class="field">
+          <label class="lab" for="f_keiri_tel">経理ご担当者の電話番号<span class="opt">任意</span></label>
+          <div class="guide">経理ご担当者様に直接つながる番号があればご記入ください。
+<span class="ex">【例】06-1234-5679</span></div>
+          <input id="f_keiri_tel" type="tel" inputmode="tel">
         </div>
 
         <div class="field">
@@ -439,7 +394,7 @@
 
         <div class="field">
           <label class="lab" for="f_tname">ご担当者名（フルネーム）<span class="req">必須</span></label>
-          <div class="guide">契約書へのご署名や、お見積り・お手続きのご連絡をさせていただく方です。
+          <div class="guide">契約書へのご署名や、お手続きのご連絡をさせていただく方です。
 <span class="ex">【例】池田 義仁</span></div>
           <input id="f_tname" type="text" autocomplete="name" placeholder="池田 義仁">
           <div class="err" id="e_tname">ご入力ください</div>
@@ -463,8 +418,8 @@
 
         <div class="field">
           <label class="lab" for="f_tmail">メールアドレス<span class="req">必須</span></label>
-          <div class="guide">このアドレス宛にお見積りとお手続きのご案内をお送りします。
-※お間違いがあるとご連絡できませんので、必ずご確認ください。
+          <div class="guide">このアドレス宛に契約書とお手続きのご案内をお送りします。
+※お間違いがあるとお手続きが進みませんので、必ずご確認ください。
 <span class="ex">【例】y.ikeda@example.co.jp</span></div>
           <input id="f_tmail" type="email" inputmode="email" autocomplete="email" placeholder="y.ikeda@example.co.jp">
           <div class="err" id="e_tmail">メールアドレスの形式をご確認ください</div>
@@ -506,10 +461,14 @@
         <h2>送信が完了しました</h2>
         <p>
           ご入力いただき、ありがとうございました。<br>
-          内容を確認のうえ、回収プランとお見積りを
-          ご記入いただいたメールアドレス宛にご連絡いたします。<br><br>
-          しばらくお待ちくださいませ。
+          契約書を作成し、ご記入いただいたメールアドレス宛に
+          お手続きのご案内をお送りいたします。
         </p>
+        <div class="stamp hide" id="stampNote">
+          <b>口座振替をお選びいただきました。</b><br>
+          お申込用紙を契約書と一緒にお送りします。<b>銀行印（お届け印）</b>をご用意のうえ、
+          ご捺印いただきご返送ください。
+        </div>
         <div class="actions noprint" style="justify-content:center; margin-top:20px">
           <button type="button" onclick="window.print()">この画面を印刷して控える</button>
         </div>
@@ -545,11 +504,10 @@ const SEND_KEY = 'dsn-ippan-4kt9wm';
 const FIELDS = [
   { sec: '1. ご契約者の情報',
     items: [
-      { id:'f_hname',  key:'h_name',  label:'事業者名',        req:true },
-      { id:'f_haddr',  key:'h_addr',  label:'事業者住所',      req:true },
-      { id:'f_htel',   key:'h_tel',   label:'電話番号',        req:true },
+      { id:'f_hname',  key:'h_name',  label:'事業者名',          req:true },
+      { id:'f_haddr',  key:'h_addr',  label:'事業者住所',        req:true },
+      { id:'f_htel',   key:'h_tel',   label:'電話番号',          req:true },
       { id:'f_daihyo', key:'daihyo',  label:'代表者 役職・氏名', req:true },
-      { id:'f_gyoshu', key:'gyoshu',  label:'業種',            req:true },
     ]},
   { sec: '2. 回収に伺う場所',
     items: [
@@ -558,25 +516,16 @@ const FIELDS = [
       { id:'f_jaddr',  key:'j_addr',  label:'現場住所',          req:true },
       { id:'f_jtel',   key:'j_tel',   label:'現場の電話番号',    req:true },
       { id:'f_jtanto', key:'j_tanto', label:'現場ご担当者名',    req:true },
-      { id:'f_place',  key:'gomi_ba', label:'ごみを置く場所',    req:false },
-      { id:'f_teikyu', key:'teikyu',  label:'定休日',            req:false },
-      { id:'f_eigyo',  key:'eigyo_time', label:'営業時間',       req:false },
+      { id:'f_kaishi', key:'kaishi',  label:'回収開始のご希望日', req:false },
     ]},
-  { sec: '3. 出るごみについて',
+  { sec: '4. 請求書の送り先',
     items: [
-      { id:'f_shurui_other', key:'shurui_other', label:'その他の内容', req:false },
-      { id:'f_ryo',    key:'ryo',     label:'1回あたりの量', req:true },
-      { id:'f_kaisu',  key:'kaisu',   label:'希望の収集回数', req:false },
-      { id:'f_kaishi', key:'kaishi',  label:'回収開始の希望日', req:false },
-    ]},
-  { sec: '4. お支払い・請求について',
-    items: [
-      { id:'f_sname',    key:'s_name',    label:'請求先名',            req:false },
-      { id:'f_saddr',    key:'s_addr',    label:'請求先住所',          req:false },
-      { id:'f_stel',     key:'s_tel',     label:'請求先の電話番号',    req:false },
-      { id:'f_shiharai', key:'shiharai',  label:'希望のお支払い方法',  req:false },
-      { id:'f_shukin',   key:'shukin',    label:'集金に伺える時間帯',  req:false },
-      { id:'f_smail',    key:'s_mail',    label:'請求書送付先メール',  req:false, mail:true },
+      { id:'f_sname',     key:'s_name',    label:'請求先名',                 req:false },
+      { id:'f_saddr',     key:'s_addr',    label:'請求先住所',               req:false },
+      { id:'f_stel',      key:'s_tel',     label:'請求先の電話番号',         req:false },
+      { id:'f_keiri',     key:'keiri',     label:'経理ご担当者名',           req:false },
+      { id:'f_keiri_tel', key:'keiri_tel', label:'経理ご担当者の電話番号',   req:false },
+      { id:'f_smail',     key:'s_mail',    label:'請求書送付先メール',       req:false, mail:true },
     ]},
   { sec: '5. ご契約手続きのご担当者',
     items: [
@@ -590,13 +539,10 @@ const FIELDS = [
 
 const $ = (id) => document.getElementById(id);
 const val = (id) => ($(id).value || '').trim();
-const picked = (sel) => [...document.querySelectorAll(sel + ' input:checked')].map(b=>b.value);
-
-/* --- 条件表示 --- */
-function syncCond(){
-  $('otherWrap').classList.toggle('show', $('chkOther').checked);
-  $('shukinWrap').classList.toggle('show', val('f_shiharai') === '集金（現金）');
-}
+const payValue = () => {
+  const r = document.querySelector('#payWrap input[name="pay"]:checked');
+  return r ? r.value : '';
+};
 
 /* --- 「同じ」チェック --- */
 $('sameAsHonsha').addEventListener('change', function(){
@@ -631,9 +577,9 @@ function validate(){
       if(!first) first = $(f.id);
     }
   }));
-  if(!picked('#gomiShurui').length){
-    $('e_gomi').classList.add('show');
-    if(!first) first = $('gomiShurui');
+  if(!payValue()){
+    $('e_pay').classList.add('show');
+    if(!first) first = $('payWrap');
   }
   if(first){
     first.scrollIntoView({behavior:'smooth', block:'center'});
@@ -648,20 +594,11 @@ function buildConfirm(target){
   let html = '';
   FIELDS.forEach(g => {
     html += '<h3>' + g.sec + '</h3><dl>';
-    if(g.sec.startsWith('3.')){
-      const s = picked('#gomiShurui').join('・');
-      html += row('ごみの種類', s);
-    }
-    g.items.forEach(f => {
-      if(f.id === 'f_shurui_other' && !$('chkOther').checked) return;
-      if(f.id === 'f_shukin' && val('f_shiharai') !== '集金（現金）') return;
-      html += row(f.label, val(f.id));
-    });
-    if(g.sec.startsWith('3.')){
-      const y = picked('#gomiYoubi').join('・');
-      html += row('希望の曜日', y);
-    }
+    g.items.forEach(f => { html += row(f.label, val(f.id)); });
     html += '</dl>';
+    if(g.sec.startsWith('2.')){
+      html += '<h3>3. お支払い方法</h3><dl>' + row('お支払い方法', payValue()) + '</dl>';
+    }
   });
   target.innerHTML = html;
 }
@@ -690,10 +627,8 @@ $('btnSend').addEventListener('click', async () => {
   btn.disabled = true;
   btn.textContent = '送信中…';
 
-  const payload = { key: SEND_KEY };
+  const payload = { key: SEND_KEY, shiharai: payValue() };
   FIELDS.forEach(g => g.items.forEach(f => { payload[f.key] = val(f.id); }));
-  payload.shurui = picked('#gomiShurui').join('・');
-  payload.youbi  = picked('#gomiYoubi').join('・');
 
   try{
     await fetch(GAS_URL, {
@@ -702,6 +637,7 @@ $('btnSend').addEventListener('click', async () => {
       body: JSON.stringify(payload)
     });
     buildConfirm($('doneBody'));
+    $('stampNote').classList.toggle('hide', payValue() !== '口座振替');
     show('done');
   }catch(err){
     btn.disabled = false;
@@ -710,9 +646,6 @@ $('btnSend').addEventListener('click', async () => {
         + '繰り返し失敗する場合は 06-6696-6789 までお電話ください。');
   }
 });
-
-document.addEventListener('change', syncCond);
-syncCond();
 
 if(!GAS_URL){
   $('gasWarn').classList.remove('hide');
