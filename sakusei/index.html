@@ -620,9 +620,45 @@ $('btnClear').addEventListener('click', () => {
 document.addEventListener('input', render);
 document.addEventListener('change', render);
 
+/* --- 見本データ（?demo=1 で読み込む。GAS未設定でも試せるように） --- */
+function loadDemo(){
+  const d = {
+    h_name:'株式会社まるみ食品',
+    h_addr:'大阪市天王寺区上本町6-1-15 上本町ビル4F',
+    h_tel:'06-6771-3200',
+    daihyo:'代表取締役　丸山 美咲',
+    j_name:'居酒屋 まるみ 平野店',
+    j_bldg:'ヒラノプラザ 1F',
+    j_addr:'大阪市平野区平野本町3-8-12',
+    j_tel:'06-6791-4488',
+    j_tanto:'中村 大輔',
+    kaishi:'2026年9月1日',
+    shiharai:'口座振替',
+    s_name:'株式会社まるみ食品　経理部　御中',
+    s_addr:'大阪市天王寺区上本町6-1-15 上本町ビル4F',
+    s_tel:'06-6771-3201',
+    keiri:'橋本 綾',
+    keiri_tel:'06-6771-3202',
+    s_mail:'keiri@marumi-foods.example.jp',
+    tanto_name:'中村 大輔',
+    tanto_yaku:'店長',
+    tanto_tel:'080-5512-7734',
+    tanto_mail:'d.nakamura@marumi-foods.example.jp',
+    biko:'現在は他社と契約中で、8月末で解約予定です。9月1日から切り替えでお願いします。'
+  };
+  CUST.forEach(k => { if(d[k] && $(k)) $(k).value = d[k]; });
+  if(!v('shiharai_hoho') && PAY_MAP[d.shiharai]) $('shiharai_hoho').value = PAY_MAP[d.shiharai];
+  render();
+  msg('見本のお客様データを入れました。金額・〆日・車番などをご記入のうえ、'
+    + '「登録シートをPDFにする」でご確認ください。', 'ok');
+}
+
 restore();
-const qid = new URLSearchParams(location.search).get('id');
-if(qid) loadRecord(qid); else render();
+const params = new URLSearchParams(location.search);
+const qid = params.get('id');
+if(qid)                  loadRecord(qid);
+else if(params.get('demo')) loadDemo();
+else                     render();
 </script>
 </body>
 </html>
