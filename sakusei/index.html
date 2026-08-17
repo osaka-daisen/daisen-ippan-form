@@ -228,6 +228,30 @@
         </fieldset>
 
         <fieldset>
+          <legend>お客様に送るリンクを作る<span class="tag">お申込みフォーム</span></legend>
+          <div class="grid">
+            <label class="f full"><span class="lab">ご契約の種類（大泉衛生が決めます）</span>
+              <select id="linkKind">
+                <option value="ippan">一般廃棄物のみ（定期回収）</option>
+                <option value="sanpai">産業廃棄物のみ（定期回収）</option>
+                <option value="both">一般廃棄物＋産業廃棄物（定期回収）</option>
+              </select></label>
+            <label class="f full"><span class="lab">お客様にお送りするURL</span>
+              <input id="linkUrl" readonly></label>
+          </div>
+          <div class="btnrow" style="margin-top:8px">
+            <button type="button" id="btnCopyLink">URLをコピー</button>
+            <button type="button" id="btnCopyMsg">ご案内文ごとコピー</button>
+            <button type="button" class="mini" id="btnOpenLink">開いて確認</button>
+          </div>
+          <div class="hint">
+            契約の種類は<b>お客様には選ばせません</b>。ここで選んだ内容がURLに入り、
+            お申込み時にそのまま台帳と通知メールの件名に反映されます。<br>
+            種類を取り違えたまま送ってしまっても、下の「ご契約の種類」欄で直せます。
+          </div>
+        </fieldset>
+
+        <fieldset>
           <legend>お客様の入力内容<span class="tag">フォームから自動</span></legend>
           <div class="grid">
             <label class="f full"><span class="lab">事業者名</span><input id="h_name"></label>
@@ -240,7 +264,13 @@
             <label class="f"><span class="lab">現場の電話番号</span><input id="j_tel"></label>
             <label class="f"><span class="lab">現場ご担当者名</span><input id="j_tanto"></label>
             <label class="f"><span class="lab">交付担当者（産廃）</span><input id="kofu_tanto"></label>
-            <label class="f full"><span class="lab">ご契約の種類</span><input id="keiyaku_shurui" readonly></label>
+            <label class="f full"><span class="lab">ご契約の種類</span>
+              <select id="keiyaku_shurui">
+                <option value="">（未設定）</option>
+                <option value="一般廃棄物のみ（定期回収）">一般廃棄物のみ（定期回収）</option>
+                <option value="産業廃棄物のみ（定期回収）">産業廃棄物のみ（定期回収）</option>
+                <option value="一般廃棄物＋産業廃棄物（定期回収）">一般廃棄物＋産業廃棄物（定期回収）</option>
+              </select></label>
             <label class="f"><span class="lab">回収開始のご希望日</span><input id="kaishi"></label>
             <label class="f"><span class="lab">お支払い方法</span><input id="shiharai"></label>
             <label class="f full"><span class="lab">請求先名</span><input id="s_name"></label>
@@ -1167,6 +1197,38 @@ function loadDemo(){
   msg('見本のお客様データを入れました。金額・〆日・車番などをご記入のうえ、'
     + '「登録シートをPDFにする」でご確認ください。', 'ok');
 }
+
+/* --- お客様に送るリンクを作る ---
+   契約の種類はお客様に選ばせず、ここで決めてURLに埋め込む */
+const FORM_URL = 'https://osaka-daisen.github.io/daisen-ippan-form/';
+function buildLink(){
+  $('linkUrl').value = FORM_URL + '?kind=' + $('linkKind').value;
+}
+function linkMessage(){
+  return [
+    'お世話になっております。大泉衛生の〇〇です。',
+    '',
+    'このたびはお見積りにご承諾いただき、誠にありがとうございます。',
+    '契約書の作成に必要な情報を、下記のフォームよりご入力いただけますでしょうか。',
+    '',
+    '▼ ご契約手続きのご案内',
+    $('linkUrl').value,
+    '',
+    '入力は5分ほどで終わります。回収の内容・料金はお打ち合わせのとおりですので、',
+    'あらためてお伺いすることはございません。',
+    '',
+    'ご不明な点がございましたらお気軽にご連絡ください。'
+  ].join('\n');
+}
+async function copyText(text, okMsg){
+  try{ await navigator.clipboard.writeText(text); msg(okMsg, 'ok'); }
+  catch(e){ msg('コピーできませんでした。URL欄を選んで手動でコピーしてください。', 'ng'); }
+}
+$('linkKind').addEventListener('change', buildLink);
+$('btnCopyLink').addEventListener('click', () => copyText($('linkUrl').value, 'URLをコピーしました。'));
+$('btnCopyMsg').addEventListener('click', () => copyText(linkMessage(), 'ご案内文をコピーしました。'));
+$('btnOpenLink').addEventListener('click', () => window.open($('linkUrl').value, '_blank'));
+buildLink();
 
 restore();
 const params = new URLSearchParams(location.search);
