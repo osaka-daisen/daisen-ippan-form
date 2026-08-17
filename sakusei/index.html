@@ -174,8 +174,30 @@
   .doc2 .cdate{font-size:12px; margin:0; letter-spacing:.1em}
   .doc2 .stampmark{float:right; font-size:11px; margin-right:6mm}
 
+  /* ===== さつき宛 契約書作成依頼書（A4縦）=====
+     daisen-sanpai-request の書面と同じ体裁にそろえてある */
+  .doc3{
+    width:186mm; margin:0 auto; background:#fff; color:#111;
+    font-size:11pt; line-height:1.5; padding:15mm 0;
+    box-shadow:0 1px 3px rgba(0,0,0,.15);
+  }
+  .doc3 h2{font-size:18pt; font-weight:700; text-align:center; margin:0 0 7mm; letter-spacing:.08em}
+  .doc3 .to{font-size:11pt; line-height:1.9; margin-bottom:9mm}
+  .doc3 table{width:100%; border-collapse:collapse}
+  .doc3 th{
+    width:44mm; text-align:left; font-weight:700; font-size:11pt;
+    padding:2.5mm 0 1.5mm; vertical-align:bottom; white-space:nowrap;
+  }
+  .doc3 td{
+    padding:2.5mm 0 1.5mm 4mm; vertical-align:bottom; font-size:11pt;
+    border-bottom:1px dashed #555;
+  }
+  .doc3 td.kind{font-size:10pt; letter-spacing:.02em}
+  .doc3 .note{margin-top:7mm; font-size:9pt; color:#666}
+
   @media print{
     body{background:#fff}
+    .doc3{width:186mm; margin:0; padding:0; box-shadow:none}
     .noprint{display:none !important}
     .wrap{max-width:none; padding:0}
     .layout{display:block}
@@ -490,6 +512,36 @@
           </div>
         </fieldset>
 
+        <fieldset>
+          <legend>さつき依頼書の記入欄<span class="tag">産廃を含むとき</span></legend>
+          <div class="grid">
+            <div class="full">
+              <span class="lab" style="display:block; margin-bottom:4px">契約種類</span>
+              <div class="checks" id="skKinds">
+                <label><input type="checkbox" value="廃プラスチック" checked>廃プラスチック</label>
+                <label><input type="checkbox" value="金属くず" checked>金属くず</label>
+                <label><input type="checkbox" value="ガラスくず" checked>ガラスくず</label>
+                <label><input type="checkbox" value="木くず" checked>木くず</label>
+                <label><input type="checkbox" value="繊維くず" checked>繊維くず</label>
+              </div>
+            </div>
+            <label class="f"><span class="lab">契約書数量（収運用）</span><input id="sk_su_shuun"></label>
+            <label class="f"><span class="lab">契約単価（収運用）</span><input id="sk_tan_shuun"></label>
+            <label class="f"><span class="lab">契約数量（処分用）</span><input id="sk_su_shobun"></label>
+            <label class="f"><span class="lab">契約単価（処分用）</span><input id="sk_tan_shobun"></label>
+            <label class="f"><span class="lab">契約期間 開始</span><input id="sk_kikan_s" type="date"></label>
+            <label class="f"><span class="lab">契約期間 終了</span><input id="sk_kikan_e" type="date"></label>
+            <label class="f"><span class="lab">マニフェスト枚数</span><input id="sk_manifest"></label>
+          </div>
+          <div class="btnrow" style="margin-top:8px">
+            <button type="button" class="mini" id="btnKikanFromStart">契約開始日から1年で埋める</button>
+          </div>
+          <div class="hint">
+            排出事業者・排出事業場・交付担当者・代表取締役・契約締結日は、
+            上の入力からそのまま入ります。ここは<b>さつき依頼書にしか出ない欄</b>です。
+          </div>
+        </fieldset>
+
       </div>
     </div>
 
@@ -501,6 +553,7 @@
           <button type="button" class="docbtn" data-doc="sheet">登録シート</button>
           <button type="button" class="docbtn" data-doc="stamp">契約書（押印）</button>
           <button type="button" class="docbtn" data-doc="denshi">契約書（電子）</button>
+          <button type="button" class="docbtn" data-doc="satsuki">さつき依頼書</button>
         </span>
         <span id="bldgBar" class="hide" style="display:none; align-items:center; gap:6px">
           <span class="hint" style="margin:0">用途</span>
@@ -637,6 +690,35 @@
             <p class="cdate" id="c_date"></p>
           </div>
         </div>
+        <!-- さつき宛 契約書作成依頼書 -->
+        <div class="doc3 hide" id="doc3">
+          <h2>契約書作成依頼書</h2>
+          <div class="to">
+            株式会社さつき　御中<br>
+            営業部　原　拓史様<br>
+            TEL:06-4394-0057　FAX：06-4394-0058
+          </div>
+          <table>
+            <tr><th>排出事業者名</th><td id="s_hname"></td></tr>
+            <tr><th>排出事業者住所</th><td id="s_haddr"></td></tr>
+            <tr><th>排出事業者電話番号</th><td id="s_htel"></td></tr>
+            <tr><th>排出事業場名</th><td id="s_jname"></td></tr>
+            <tr><th>排出事業場住所</th><td id="s_jaddr"></td></tr>
+            <tr><th>排出事業場電話番号</th><td id="s_jtel"></td></tr>
+            <tr><th>契約種類</th><td class="kind" id="s_kind"></td></tr>
+            <tr><th>契約書数量（収運用）</th><td id="s_su_shuun"></td></tr>
+            <tr><th>契約単価（収運用）</th><td id="s_tan_shuun"></td></tr>
+            <tr><th>契約数量（処分用）</th><td id="s_su_shobun"></td></tr>
+            <tr><th>契約単価（処分用）</th><td id="s_tan_shobun"></td></tr>
+            <tr><th>契約期間</th><td id="s_kikan"></td></tr>
+            <tr><th>契約締結日</th><td id="s_teiketsu"></td></tr>
+            <tr><th>マニフェスト枚数</th><td id="s_manifest"></td></tr>
+            <tr><th>交付担当者</th><td id="s_kofu"></td></tr>
+            <tr><th>代表取締役</th><td id="s_daihyo"></td></tr>
+          </table>
+          <div class="note">※ 産業廃棄物処理契約書の作成をご依頼いたします。</div>
+        </div>
+
                 <div class="cutline">✂ ここで切ると A4 のちょうど半分になります</div>
       </div>
     </div>
@@ -698,7 +780,9 @@ const OWN  = ['shurui_other','keiyaku_start','teiketsu_bi','k_shurui','k_hindo',
               'shiharai_hi2','shiharai_hoho','furikomi','moushikomi','kaishi_made','shukin',
               'shokai_shu','shokai_nyu','shokai_bun','shaban','muryo','baketsu',
               'nichiyou','nenshi','nenmatsu','kasan12','kasan1','tasa',
-              'tan_eigyo','tan_kanri','tan_jimu','bikou_shanai'];
+              'tan_eigyo','tan_kanri','tan_jimu','bikou_shanai',
+              'sk_su_shuun','sk_tan_shuun','sk_su_shobun','sk_tan_shobun',
+              'sk_kikan_s','sk_kikan_e','sk_manifest'];
 
 /* お客様が選んだ支払方法 → 契約書管理システムの語彙 */
 const PAY_MAP = { '口座振替': '自動引落', '銀行振込': '振込', '集金（現金）': '集金' };
@@ -828,7 +912,64 @@ function render(){
   ], '　／　')));
 
   renderKeiyaku();
+  renderSatsuki();
   save();
+}
+
+/* --- さつき宛 契約書作成依頼書 --- */
+const SK_KINDS = ['廃プラスチック','金属くず','ガラスくず','木くず','繊維くず'];
+
+/* 西暦で「2026年9月1日」。さつき書面は元号でなく西暦 */
+function seireki(s){
+  const t = ymd(s);
+  return t ? t.y + '年' + t.m + '月' + t.d + '日' : '';
+}
+/* 数字だけなら「枚」を足す。「10枚つづり」等はそのまま */
+function manifestText(v){
+  if(!v) return '';
+  return /^\d+$/.test(v) ? v + '枚' : v;
+}
+function renderSatsuki(){
+  if(!$('doc3')) return;
+
+  txt('s_hname', v('h_name'));
+  txt('s_haddr', v('h_addr'));
+  txt('s_htel',  v('h_tel'));
+  txt('s_jname', join([v('j_name'), v('j_bldg')], '　'));
+  txt('s_jaddr', v('j_addr'));
+  txt('s_jtel',  v('j_tel'));
+
+  const on = [...document.querySelectorAll('#skKinds input')]
+    .filter(b => b.checked).map(b => b.value);
+  cell('s_kind', SK_KINDS.map(k => (on.indexOf(k) >= 0 ? '☑' : '□') + esc(k)).join('　'));
+
+  txt('s_su_shuun',  v('sk_su_shuun'));
+  txt('s_tan_shuun', v('sk_tan_shuun'));
+  txt('s_su_shobun', v('sk_su_shobun'));
+  txt('s_tan_shobun',v('sk_tan_shobun'));
+
+  const ks = seireki(v('sk_kikan_s')), ke = seireki(v('sk_kikan_e'));
+  txt('s_kikan', (ks || ke) ? ks + '〜' + ke : '');
+  txt('s_teiketsu', seireki(v('teiketsu_bi')));
+  txt('s_manifest', manifestText(v('sk_manifest')));
+  // 交付担当者はお客様が書いた現場ご担当者。産廃を含むときだけ入っている
+  txt('s_kofu',   v('kofu_tanto') || v('j_tanto'));
+  txt('s_daihyo', v('daihyo'));
+}
+
+/* 契約開始日から1年（前日まで）を入れる。既存の産廃ツールと同じ考え方 */
+function fillKikanFromStart(){
+  const base = v('sk_kikan_s') || v('keiyaku_start');
+  const t = ymd(base);
+  if(!t){ msg('先に「契約開始日」を入れてください。', 'ng'); return; }
+  const s = new Date(t.y, t.m - 1, t.d);
+  const e = new Date(t.y + 1, t.m - 1, t.d - 1);
+  const iso = (x) => x.getFullYear() + '-'
+    + String(x.getMonth() + 1).padStart(2, '0') + '-'
+    + String(x.getDate()).padStart(2, '0');
+  $('sk_kikan_s').value = iso(s);
+  $('sk_kikan_e').value = iso(e);
+  render();
 }
 
 /* --- 契約書の条文 --- */
@@ -984,22 +1125,40 @@ document.querySelectorAll('.otsubtn').forEach(function(b){
 let docType = 'sheet';
 function setDoc(type){
   docType = type;
-  const sheet = type === 'sheet';
-  $('doc').classList.toggle('hide', !sheet);
-  $('doc2').classList.toggle('hide', sheet);
+  const sheet   = type === 'sheet';
+  const satsuki = type === 'satsuki';
+  const keiyaku = !sheet && !satsuki;          // 押印／電子の契約書
+
+  $('doc').classList.toggle('hide',  !sheet);
+  $('doc2').classList.toggle('hide', !keiyaku);
+  $('doc3').classList.toggle('hide', !satsuki);
   document.querySelector('.cutline').style.display = sheet ? '' : 'none';
+
   $('sheetSizes').style.display   = sheet ? 'inline-flex' : 'none';
-  $('keiyakuSizes').style.display = sheet ? 'none' : 'inline-flex';
-  $('keiyakuSizes').classList.toggle('hide', sheet);
-  $('bldgBar').classList.toggle('hide', sheet);
-  $('bldgBar').style.display = sheet ? 'none' : 'inline-flex';
-  $('otsuBar').classList.toggle('hide', sheet);
-  $('otsuBar').style.display = sheet ? 'none' : 'inline-flex';
+  $('keiyakuSizes').style.display = keiyaku ? 'inline-flex' : 'none';
+  $('keiyakuSizes').classList.toggle('hide', !keiyaku);
+  // 用途（事業所／共同住宅）と受託者（大阪／堺）は契約書だけの切替
+  $('bldgBar').classList.toggle('hide', !keiyaku);
+  $('bldgBar').style.display = keiyaku ? 'inline-flex' : 'none';
+  $('otsuBar').classList.toggle('hide', !keiyaku);
+  $('otsuBar').style.display = keiyaku ? 'inline-flex' : 'none';
+
   document.querySelectorAll('.docbtn').forEach(b => b.classList.toggle('on', b.dataset.doc === type));
-  $('btnPrint').textContent = sheet ? '登録シートをPDFにする'
-    : (type === 'stamp' ? '契約書（押印用）をPDFにする' : '契約書（電子用）をPDFにする');
-  if(sheet) setSize(sheetSize); else setKeiyakuSize(keiyakuSize);
+  $('btnPrint').textContent = sheet   ? '登録シートをPDFにする'
+    : satsuki                         ? 'さつき依頼書をPDFにする'
+    : type === 'stamp'                ? '契約書（押印用）をPDFにする'
+                                      : '契約書（電子用）をPDFにする';
+
+  if(sheet)        setSize(sheetSize);
+  // 本文186mm＋左右12mm＝A4の幅210mmちょうど。余白を広げると右が切れる
+  else if(satsuki) $('pageSize').textContent = '@page{size:A4 portrait; margin:12mm}';
+  else             setKeiyakuSize(keiyakuSize);
+  // さつき依頼書はA4縦の原寸。契約書用の縮小クラスが残っていると崩れる
+  document.body.classList.toggle('ka3', keiyaku && keiyakuSize === 'a3');
+  document.body.classList.toggle('ka4', keiyaku && keiyakuSize !== 'a3');
+
   renderKeiyaku();
+  renderSatsuki();
   try{ localStorage.setItem('daisen_ippan_doctype', type); }catch(e){}
 }
 let keiyakuSize = 'a3';
@@ -1017,6 +1176,9 @@ function setKeiyakuSize(size){
 }
 document.querySelectorAll('.docbtn').forEach(b =>
   b.addEventListener('click', () => setDoc(b.dataset.doc)));
+document.querySelectorAll('#skKinds input').forEach(b =>
+  b.addEventListener('change', render));
+$('btnKikanFromStart').addEventListener('click', fillKikanFromStart);
 /* 廃棄物の種類のよく使う書き方をワンタップで入れる */
 /* 選んだ曜日から「週6回（月曜日〜土曜日）」のような文言を作る */
 const DAYS = ['月','火','水','木','金','土','日'];
@@ -1064,7 +1226,8 @@ document.querySelectorAll('#keiyakuSizes .sizebtn').forEach(b =>
 function save(){
   const o = {
     _gomi: [...document.querySelectorAll('#gomiChecks input')].map(b=>b.checked),
-    _days: [...document.querySelectorAll('#hindoDays input')].map(b=>b.checked)
+    _days: [...document.querySelectorAll('#hindoDays input')].map(b=>b.checked),
+    _sk:   [...document.querySelectorAll('#skKinds input')].map(b=>b.checked)
   };
   INPUTS.forEach(id => o[id] = v(id));
   try{ localStorage.setItem(STORE, JSON.stringify(o)); }catch(e){}
@@ -1081,6 +1244,11 @@ function restore(){
   if(Array.isArray(o._days)){
     [...document.querySelectorAll('#hindoDays input')].forEach((b,i)=>{
       if(o._days[i]!=null) b.checked = o._days[i];
+    });
+  }
+  if(Array.isArray(o._sk)){
+    [...document.querySelectorAll('#skKinds input')].forEach((b,i)=>{
+      if(o._sk[i]!=null) b.checked = o._sk[i];
     });
   }
 }
@@ -1157,6 +1325,7 @@ $('btnClear').addEventListener('click', () => {
   if(!confirm('入力した内容をすべて消します。よろしいですか？')) return;
   INPUTS.forEach(id => { if($(id)) $(id).value = ''; });
   document.querySelectorAll('#gomiChecks input').forEach(b=>b.checked=false);
+  document.querySelectorAll('#skKinds input').forEach(b=>b.checked=true);
   localStorage.removeItem(STORE);
   msg('');
   render();
