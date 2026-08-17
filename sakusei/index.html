@@ -239,6 +239,8 @@
             <label class="f full"><span class="lab">現場住所</span><input id="j_addr"></label>
             <label class="f"><span class="lab">現場の電話番号</span><input id="j_tel"></label>
             <label class="f"><span class="lab">現場ご担当者名</span><input id="j_tanto"></label>
+            <label class="f"><span class="lab">交付担当者（産廃）</span><input id="kofu_tanto"></label>
+            <label class="f full"><span class="lab">ご契約の種類</span><input id="keiyaku_shurui" readonly></label>
             <label class="f"><span class="lab">回収開始のご希望日</span><input id="kaishi"></label>
             <label class="f"><span class="lab">お支払い方法</span><input id="shiharai"></label>
             <label class="f full"><span class="lab">請求先名</span><input id="s_name"></label>
@@ -653,11 +655,11 @@ const OTSU = {
 };
 
 const $ = (id) => document.getElementById(id);
-const v = (id) => ($(id).value || '').trim();
+const v = (id) => { const el = $(id); return el ? (el.value || '').trim() : ''; };
 
 /* お客様がフォームで入力する項目（?id= で自動的に入る） */
-const CUST = ['h_name','h_addr','h_tel','daihyo','j_name','j_bldg','j_addr','j_tel',
-              'j_tanto','kaishi','shiharai','s_name','s_addr','s_tel','keiri','keiri_tel',
+const CUST = ['keiyaku_shurui','h_name','h_addr','h_tel','daihyo','j_name','j_bldg','j_addr','j_tel',
+              'j_tanto','kofu_tanto','kaishi','shiharai','s_name','s_addr','s_tel','keiri','keiri_tel',
               's_mail','tanto_name','tanto_yaku','tanto_tel','tanto_mail','biko'];
 /* 大泉衛生が入れる項目 */
 const OWN  = ['shurui_other','keiyaku_start','teiketsu_bi','k_shurui','k_hindo','k_jikan','k_kyushi',

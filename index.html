@@ -161,7 +161,7 @@
     <div class="logo">大泉</div>
     <div>
       <h1>ご契約手続きのご案内</h1>
-      <div class="sub">大泉衛生株式会社　／　事業系ごみ 定期回収</div>
+      <div class="sub" id="headSub">大泉衛生株式会社　／　事業系ごみ 定期回収</div>
     </div>
   </header>
 
@@ -185,6 +185,46 @@
 
     <div id="gasWarn" class="notice hide noprint">
       ただいま送信の準備中です。お手数ですが、お電話（06-6696-6789）またはメールにてご連絡ください。
+    </div>
+
+    <!-- ご契約の種類 -->
+    <div class="card">
+      <div class="chead">ご契約の種類</div>
+      <div class="cbody">
+        <div class="field">
+          <label class="lab">お申込みの内容をお選びください<span class="req">必須</span></label>
+          <div class="guide">お打ち合わせでお伝えしている内容をお選びください。
+選んだ内容にあわせて、以下の入力項目が変わります。</div>
+          <div class="pay" id="kindWrap">
+
+            <label class="payopt">
+              <input type="radio" name="kind" value="ippan" id="kindIppan">
+              <span>
+                <span class="ttl">事業系ごみの定期回収だけ</span>
+                <span class="sub2">生ごみ・紙くずなどの一般廃棄物を、決まった曜日に回収します。</span>
+              </span>
+            </label>
+
+            <label class="payopt">
+              <input type="radio" name="kind" value="sanpai" id="kindSanpai">
+              <span>
+                <span class="ttl">産業廃棄物だけ</span>
+                <span class="sub2">廃プラスチック・金属くず・ガラスくずなどの産業廃棄物を回収します。</span>
+              </span>
+            </label>
+
+            <label class="payopt">
+              <input type="radio" name="kind" value="both" id="kindBoth">
+              <span>
+                <span class="ttl">両方</span>
+                <span class="sub2">一般廃棄物と産業廃棄物の両方です。民泊・宿泊施設などが該当します。</span>
+              </span>
+            </label>
+
+          </div>
+          <div class="err" id="e_kind">お選びください</div>
+        </div>
+      </div>
     </div>
 
     <!-- 1. 契約者情報 -->
@@ -272,14 +312,14 @@
 
         <div class="field">
           <label class="lab" for="f_jtanto">現場ご担当者名<span class="req">必須</span></label>
-          <div class="guide">回収当日にやり取りをさせていただく方のお名前です。
+          <div class="guide"><span id="jtantoGuide">回収当日にやり取りをさせていただく方のお名前です。</span>
 ※個人契約の場合は、ご自身のお名前をご記入ください。
 <span class="ex">【例】田中 太郎</span></div>
           <input id="f_jtanto" type="text" placeholder="田中 太郎">
           <div class="err" id="e_jtanto">ご入力ください</div>
         </div>
 
-        <div class="field">
+        <div class="field" id="fldKaishi">
           <label class="lab" for="f_kaishi">回収開始のご希望日<span class="opt">任意</span></label>
           <div class="guide">ご希望があればお書きください。お打ち合わせで決まっている場合は空欄で結構です。
 <span class="ex">【例】2026年9月1日　／　できるだけ早く</span></div>
@@ -290,7 +330,7 @@
     </div>
 
     <!-- 3. お支払い -->
-    <div class="card">
+    <div class="card" id="cardPay">
       <div class="chead"><span class="n">3</span>お支払い方法</div>
       <div class="cbody">
 
@@ -544,6 +584,53 @@ const payValue = () => {
   return r ? r.value : '';
 };
 
+/* --- ご契約の種類（一廃／産廃／両方）--- */
+const KIND_LABEL = {
+  ippan:  '一般廃棄物（事業系ごみ 定期回収）',
+  sanpai: '産業廃棄物',
+  both:   '一般廃棄物＋産業廃棄物'
+};
+const kindValue = () => {
+  const r = document.querySelector('#kindWrap input[name="kind"]:checked');
+  return r ? r.value : '';
+};
+const hasIppan  = () => { const k = kindValue(); return k === 'ippan'  || k === 'both'; };
+const hasSanpai = () => { const k = kindValue(); return k === 'sanpai' || k === 'both'; };
+/* 表示されている項目だけを検証・送信の対象にする */
+const shown = (el) => !!el && !el.classList.contains('hide');
+
+/* 選ばれた種類にあわせて、要る項目だけ出す */
+function applyKind(){
+  const k = kindValue();
+  if(!k) return;
+  // 支払方法と回収開始日は定期回収（一廃）の運用に必要なもの
+  $('cardPay').classList.toggle('hide', !hasIppan());
+  $('fldKaishi').classList.toggle('hide', !hasIppan());
+  // 産廃を含むときは、この方がマニフェストの交付担当者になる
+  $('jtantoGuide').textContent = hasSanpai()
+    ? '回収当日にやり取りと、マニフェスト（産業廃棄物管理票）の受け渡しをしていただく方のお名前です。'
+    : '回収当日にやり取りをさせていただく方のお名前です。';
+  $('headSub').textContent = '大泉衛生株式会社　／　' + (
+    k === 'ippan'  ? '事業系ごみ 定期回収' :
+    k === 'sanpai' ? '産業廃棄物 収集運搬' :
+                     '事業系ごみ 定期回収＋産業廃棄物');
+  $('e_kind').classList.remove('show');
+  renumberCards();
+}
+
+/* 隠れたカードのぶん番号が飛ばないよう、見えているものだけ1から振り直す */
+function renumberCards(){
+  let n = 0;
+  document.querySelectorAll('#screen-form .card').forEach(function(card){
+    const badge = card.querySelector('.chead .n');
+    if(!badge) return;
+    if(card.classList.contains('hide')){ return; }
+    badge.textContent = ++n;
+  });
+}
+document.querySelectorAll('#kindWrap input[name="kind"]').forEach(function(r){
+  r.addEventListener('change', applyKind); });
+
 /* --- 「同じ」チェック --- */
 $('sameAsHonsha').addEventListener('change', function(){
   if(!this.checked) return;
@@ -565,7 +652,12 @@ function clearErr(){
 function validate(){
   clearErr();
   let first = null;
+  if(!kindValue()){
+    $('e_kind').classList.add('show');
+    first = $('kindWrap');
+  }
   FIELDS.forEach(g => g.items.forEach(f => {
+    if(!shown($(f.id).closest('.field'))) return;   // 隠れている項目は問わない
     const v = val(f.id);
     let ng = false;
     if(f.req && !v) ng = true;
@@ -577,7 +669,7 @@ function validate(){
       if(!first) first = $(f.id);
     }
   }));
-  if(!payValue()){
+  if(shown($('cardPay')) && !payValue()){
     $('e_pay').classList.add('show');
     if(!first) first = $('payWrap');
   }
@@ -591,13 +683,19 @@ function validate(){
 
 /* --- 確認画面 --- */
 function buildConfirm(target){
-  let html = '';
+  let html = '<h3>ご契約の種類</h3><dl>'
+           + row('お申込みの内容', KIND_LABEL[kindValue()] || '') + '</dl>';
+  let n = 0;                                   // 隠れた章のぶん番号が飛ばないよう振り直す
+  const head = (sec) => '<h3>' + (++n) + '. ' + sec.replace(/^\d+\.\s*/, '') + '</h3>';
   FIELDS.forEach(g => {
-    html += '<h3>' + g.sec + '</h3><dl>';
-    g.items.forEach(f => { html += row(f.label, val(f.id)); });
+    html += head(g.sec) + '<dl>';
+    g.items.forEach(f => {
+      if(!shown($(f.id).closest('.field'))) return;
+      html += row(f.label, val(f.id));
+    });
     html += '</dl>';
-    if(g.sec.startsWith('2.')){
-      html += '<h3>3. お支払い方法</h3><dl>' + row('お支払い方法', payValue()) + '</dl>';
+    if(g.sec.startsWith('2.') && shown($('cardPay'))){
+      html += head('お支払い方法') + '<dl>' + row('お支払い方法', payValue()) + '</dl>';
     }
   });
   target.innerHTML = html;
@@ -627,8 +725,16 @@ $('btnSend').addEventListener('click', async () => {
   btn.disabled = true;
   btn.textContent = '送信中…';
 
-  const payload = { key: SEND_KEY, shiharai: payValue() };
-  FIELDS.forEach(g => g.items.forEach(f => { payload[f.key] = val(f.id); }));
+  const payload = {
+    key: SEND_KEY,
+    keiyaku_shurui: KIND_LABEL[kindValue()] || '',
+    shiharai: shown($('cardPay')) ? payValue() : ''
+  };
+  FIELDS.forEach(g => g.items.forEach(f => {
+    payload[f.key] = shown($(f.id).closest('.field')) ? val(f.id) : '';
+  }));
+  // 産廃を含むときは、現場ご担当者がマニフェストの交付担当者になる
+  payload.kofu_tanto = hasSanpai() ? val('f_jtanto') : '';
 
   try{
     await fetch(GAS_URL, {
