@@ -475,6 +475,11 @@
           <button type="button" class="docbtn bldgbtn" data-bldg="office">事業所</button>
           <button type="button" class="docbtn bldgbtn" data-bldg="mansion">共同住宅</button>
         </span>
+        <span id="otsuBar" class="hide" style="display:none; align-items:center; gap:6px">
+          <span class="hint" style="margin:0">受託者</span>
+          <button type="button" class="docbtn otsubtn" data-otsu="osaka">大阪</button>
+          <button type="button" class="docbtn otsubtn" data-otsu="sakai">堺</button>
+        </span>
         <span style="flex:1"></span>
         <button type="button" class="primary" id="btnPrint">PDFにする</button>
       </div>
@@ -589,11 +594,11 @@
 
             <div class="rh2">【乙（受託者）】</div>
             <table class="ctbl">
-              <tr><th>住所</th><td>〒546-0032 大阪市東住吉区東田辺3-26-31</td></tr>
-              <tr><th>名称</th><td>大泉衛生株式会社</td></tr>
-              <tr><th>代表者</th><td id="c_otsu_daihyo">代表取締役 木村 元</td></tr>
-              <tr><th>TEL</th><td>06-6696-6789</td></tr>
-              <tr><th>許可</th><td>大阪市一般廃棄物収集運搬業 第003-123号</td></tr>
+              <tr><th>住所</th><td id="c_otsu_addr"></td></tr>
+              <tr><th>名称</th><td id="c_otsu_name"></td></tr>
+              <tr><th>代表者</th><td id="c_otsu_daihyo"></td></tr>
+              <tr><th>TEL</th><td id="c_otsu_tel"></td></tr>
+              <tr><th>許可</th><td id="c_otsu_kyoka"></td></tr>
             </table>
 
             <p class="closing" id="c_closing"></p>
@@ -613,6 +618,38 @@
 const GAS_URL  = '';                       // 一廃フォームのGASウェブアプリURL
 const SEND_KEY = 'dsn-ippan-4kt9wm';
 const STORE    = 'daisen_ippan_maker_v1';
+
+/* ============================================================
+   受託者（乙）＝大泉衛生。大阪法人と堺法人で契約書を切り替える。
+   条文の「大阪市」「大阪地方裁判所」もここの値から差し込まれるので、
+   社名・住所を直すときはこの表だけ直せば全部そろう。
+
+   ⚠ 商号はどちらも「大泉衛生株式会社」だが別法人。混ぜないこと。
+   ⚠ 堺の住所は登記上の本店（北花田町）。浅香山3丁の新事務所（2026-08-18開設）へ
+      本店移転登記をしたら addr を差し替えること。郵便番号は未確認のため入れていない。
+   ============================================================ */
+const OTSU = {
+  osaka: {
+    name:     '大泉衛生株式会社',
+    addr:     '〒546-0032 大阪市東住吉区東田辺3-26-31',
+    daihyo:   '代表取締役 木村 元',
+    tel:      '06-6696-6789',
+    kyoka:    '大阪市一般廃棄物収集運搬業 第003-123号',
+    kyokaBun: '大阪市一般廃棄物収集運搬業許可（第003-123号）',
+    shi:      '大阪市',
+    court:    '大阪地方裁判所'
+  },
+  sakai: {
+    name:     '大泉衛生株式会社',
+    addr:     '大阪府堺市北区北花田町4丁102番地4-302号',
+    daihyo:   '代表取締役 木村 稔',
+    tel:      '072-240-3841',
+    kyoka:    '堺市一般廃棄物収集運搬業 第99号',
+    kyokaBun: '堺市一般廃棄物収集運搬業許可（第99号）',
+    shi:      '堺市',
+    court:    '大阪地方裁判所堺支部'
+  }
+};
 
 const $ = (id) => document.getElementById(id);
 const v = (id) => ($(id).value || '').trim();
@@ -763,19 +800,19 @@ function render(){
 
 /* --- 契約書の条文 --- */
 /* 事業所版と共同住宅版で、前文・第1条・第5条だけが変わる */
-function arts(mansion){
+function arts(mansion, o){
   const a1 = mansion
     ? ['甲は、甲が管理する共同住宅から排出される一般廃棄物の収集運搬を乙に委託し、乙はこれを受託する。',
-       '乙は、大阪市一般廃棄物収集運搬業許可（第003-123号）に基づき本業務を遂行する。',
+       '乙は、' + o.kyokaBun + 'に基づき本業務を遂行する。',
        '産業廃棄物は本契約の対象外とする。共同住宅の管理・修繕等に伴い産業廃棄物が生じ、甲がその収集運搬を希望する場合は、別途産業廃棄物収集運搬契約を締結するものとし、本契約の範囲に含めてはならない。']
     : ['甲は、甲の事業所から排出される事業系一般廃棄物の収集運搬を乙に委託し、乙はこれを受託する。',
-       '乙は、大阪市一般廃棄物収集運搬業許可（第003-123号）に基づき本業務を遂行する。',
+       '乙は、' + o.kyokaBun + 'に基づき本業務を遂行する。',
        '産業廃棄物は本契約の対象外とする。甲が産業廃棄物の収集運搬を希望する場合は、別途産業廃棄物収集運搬契約を締結するものとし、本契約の範囲に含めてはならない。'];
   const a5 = mansion
-    ? ['甲は、大阪市の分別基準に従い居住者が適正に分別・排出するよう周知し、所定の場所・時間に排出されるよう管理する。',
+    ? ['甲は、' + o.shi + 'の分別基準に従い居住者が適正に分別・排出するよう周知し、所定の場所・時間に排出されるよう管理する。',
        '産業廃棄物・危険物・有害物質を一般廃棄物に混入させてはならない。',
        '粗大ごみその他通常の家庭系一般廃棄物以外のものが排出された場合は、甲乙協議のうえ別途処理するものとする。']
-    : ['甲は大阪市の分別基準に従い、廃棄物を適正に分別し、所定の場所・時間に排出する。',
+    : ['甲は' + o.shi + 'の分別基準に従い、廃棄物を適正に分別し、所定の場所・時間に排出する。',
        '産業廃棄物・危険物・有害物質を事業系一般廃棄物に混入させてはならない。'];
   return [
     ['第1条（委託業務）', a1],
@@ -792,8 +829,8 @@ function arts(mansion){
       '期間満了1ヶ月前までに書面による解約の申出がない場合、同一条件で1年間自動更新する。']],
     ['第5条（甲の義務）', a5],
     ['第6条（乙の義務）', [
-      '乙は廃棄物処理法及び大阪市条例を遵守し、適正に収集運搬する。',
-      '収集した廃棄物は大阪市指定の処理施設に搬入する。']],
+      '乙は廃棄物処理法及び' + o.shi + '条例を遵守し、適正に収集運搬する。',
+      '収集した廃棄物は' + o.shi + '指定の処理施設に搬入する。']],
     ['第7条（解除）', [
       '甲又は乙は、相手方が契約に違反し催告後も是正しない場合、破産等の申立てがあった場合、又は許可の取消し等を受けた場合、直ちに本契約を解除できる。',
       '甲又は乙は、1ヶ月前に書面で通知し解約できる。']],
@@ -802,7 +839,7 @@ function arts(mansion){
       '損害賠償：本契約に違反し相手方に損害を与えた場合はその損害を賠償する。',
       '反社排除：甲乙は自ら及びその役員等が反社会的勢力に該当しないことを保証する。',
       '協議：本契約に定めのない事項は甲乙協議のうえ解決する。',
-      '管轄：本契約に関する紛争は大阪地方裁判所を専属的合意管轄裁判所とする。']]
+      '管轄：本契約に関する紛争は' + o.court + 'を専属的合意管轄裁判所とする。']]
   ];
 }
 const ART_E = [
@@ -836,17 +873,18 @@ function renderKeiyaku(){
   if(!$('doc2')) return;
   const stamp   = docType === 'stamp';
   const mansion = bldgType === 'mansion';
+  const o       = OTSU[otsuType] || OTSU.osaka;
 
   $('c_title').textContent = mansion
     ? '一般廃棄物収集運搬業務委託契約書（共同住宅）'
     : '一般廃棄物収集運搬業務委託契約書';
   $('c_lead').innerHTML = '委託者　<span class="fill">' + esc(v('h_name')) + '</span>　'
-    + '（以下「甲」という。）と受託者 大泉衛生株式会社（以下「乙」という。）は、'
+    + '（以下「甲」という。）と受託者 ' + esc(o.name) + '（以下「乙」という。）は、'
     + (mansion
         ? '甲が管理する共同住宅から排出される一般廃棄物'
         : '甲の事業活動に伴い排出される事業系一般廃棄物')
     + 'の収集運搬業務について、以下のとおり契約を締結する。';
-  $('c_arts').innerHTML = artHtml(arts(mansion)) + (stamp ? '' : artHtml(ART_E));
+  $('c_arts').innerHTML = artHtml(arts(mansion, o)) + (stamp ? '' : artHtml(ART_E));
 
   document.querySelectorAll('#doc2 .lbl-jname').forEach(function(e){
     e.textContent = mansion ? '共同住宅名' : '収集先事業所名'; });
@@ -875,7 +913,11 @@ function renderKeiyaku(){
     + (stamp ? '<span class="stampmark">㊞</span>' : ''));
   txt('c_htel',    v('h_tel'));
 
-  $('c_otsu_daihyo').innerHTML = '代表取締役 木村 元'
+  txt('c_otsu_addr',  o.addr);
+  txt('c_otsu_name',  o.name);
+  txt('c_otsu_tel',   o.tel);
+  txt('c_otsu_kyoka', o.kyoka);
+  $('c_otsu_daihyo').innerHTML = esc(o.daihyo)
     + (stamp ? '<span class="stampmark">㊞</span>' : '');
   $('c_closing').textContent = stamp ? CLOSE_STAMP : CLOSE_DENSHI;
   $('c_date').textContent    = wareki(v('teiketsu_bi'));
@@ -893,6 +935,18 @@ function setBldg(type){
 document.querySelectorAll('.bldgbtn').forEach(function(b){
   b.addEventListener('click', function(){ setBldg(b.dataset.bldg); }); });
 
+/* --- 受託者（乙）＝大阪法人／堺法人 --- */
+let otsuType = 'osaka';
+function setOtsu(type){
+  otsuType = OTSU[type] ? type : 'osaka';
+  document.querySelectorAll('.otsubtn').forEach(function(b){
+    b.classList.toggle('on', b.dataset.otsu === otsuType); });
+  renderKeiyaku();
+  try{ localStorage.setItem('daisen_ippan_otsu', otsuType); }catch(e){}
+}
+document.querySelectorAll('.otsubtn').forEach(function(b){
+  b.addEventListener('click', function(){ setOtsu(b.dataset.otsu); }); });
+
 /* --- 書類の切り替え --- */
 let docType = 'sheet';
 function setDoc(type){
@@ -906,6 +960,8 @@ function setDoc(type){
   $('keiyakuSizes').classList.toggle('hide', sheet);
   $('bldgBar').classList.toggle('hide', sheet);
   $('bldgBar').style.display = sheet ? 'none' : 'inline-flex';
+  $('otsuBar').classList.toggle('hide', sheet);
+  $('otsuBar').style.display = sheet ? 'none' : 'inline-flex';
   document.querySelectorAll('.docbtn').forEach(b => b.classList.toggle('on', b.dataset.doc === type));
   $('btnPrint').textContent = sheet ? '登録シートをPDFにする'
     : (type === 'stamp' ? '契約書（押印用）をPDFにする' : '契約書（電子用）をPDFにする');
@@ -1051,6 +1107,9 @@ setSize(sheetSize);
 let savedBldg = 'office';
 try{ savedBldg = localStorage.getItem('daisen_ippan_bldg') || 'office'; }catch(e){}
 setBldg(savedBldg);
+let savedOtsu = 'osaka';
+try{ savedOtsu = localStorage.getItem('daisen_ippan_otsu') || 'osaka'; }catch(e){}
+setOtsu(savedOtsu);
 let savedDoc = 'sheet';
 try{ savedDoc = localStorage.getItem('daisen_ippan_doctype') || 'sheet'; }catch(e){}
 setDoc(savedDoc);
