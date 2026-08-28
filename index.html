@@ -435,7 +435,7 @@
         </div>
 
         <div class="field">
-          <label class="lab" for="f_tyaku">役職<span class="req">必須</span></label>
+          <label class="lab" for="f_tyaku">役職<span class="opt">任意</span></label>
           <div class="guide">契約書の署名欄に表示される場合があります。
 <span class="ex">【例】代表取締役　／　店長　／　総務部長</span></div>
           <input id="f_tyaku" type="text" placeholder="店長">
@@ -566,7 +566,7 @@ const FIELDS = [
   { sec: '5. ご契約手続きのご担当者',
     items: [
       { id:'f_tname', key:'tanto_name', label:'ご担当者名',     req:true },
-      { id:'f_tyaku', key:'tanto_yaku', label:'役職',           req:true },
+      { id:'f_tyaku', key:'tanto_yaku', label:'役職',           req:false },
       { id:'f_ttel',  key:'tanto_tel',  label:'電話番号',       req:true },
       { id:'f_tmail', key:'tanto_mail', label:'メールアドレス', req:true, mail:true },
       { id:'f_biko',  key:'biko',       label:'ご要望・ご質問', req:false },
