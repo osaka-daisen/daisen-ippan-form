@@ -327,6 +327,50 @@
           <div class="err" id="e_pay">お選びください</div>
         </div>
 
+        <!-- 銀行振込のときだけ出す。口座振替は引き落としなので未収がほぼ起きない -->
+        <div class="field hide" id="fldYobi">
+          <label class="lab">お電話が繋がらないとき、どちらへご連絡すればよいですか<span class="req">必須</span></label>
+          <div class="guide">お振込みの確認などでご連絡することがございます。
+その番号に繋がらないとご連絡ができず、やむを得ず回収を止めることがございますので、
+もう1つご連絡の手段を教えてください。</div>
+          <div class="pay" id="yobiWrap">
+
+            <label class="payopt">
+              <input type="radio" name="yobi" value="tel2">
+              <span>
+                <span class="ttl">別の電話番号へ</span>
+                <span class="sub2">事務所・別店舗など、上とは違う番号</span>
+              </span>
+            </label>
+
+            <label class="payopt">
+              <input type="radio" name="yobi" value="daihyo">
+              <span>
+                <span class="ttl">代表者・オーナーの携帯へ</span>
+                <span class="sub2">店舗が留守のときでも繋がる番号</span>
+              </span>
+            </label>
+
+            <label class="payopt">
+              <input type="radio" name="yobi" value="mail">
+              <span>
+                <span class="ttl">メールでご連絡ください</span>
+                <span class="sub2">「5. ご契約手続きのご担当者」にご記入のアドレス宛にご連絡します</span>
+              </span>
+            </label>
+
+          </div>
+          <div class="err" id="e_yobi">お選びください</div>
+
+          <div class="hide" id="yobiTelBox" style="margin-top:14px">
+            <label class="lab" for="f_yobitel" id="yobiTelLab">電話番号<span class="req">必須</span></label>
+            <div class="guide" id="yobiTelGuide">上とは違う番号をご記入ください。
+<span class="ex">【例】090-0000-0000</span></div>
+            <input id="f_yobitel" type="tel" inputmode="tel" placeholder="090-0000-0000">
+            <div class="err" id="e_yobitel">ご入力ください</div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -580,6 +624,41 @@ const payValue = () => {
   return r ? r.value : '';
 };
 
+/* --- 繋がらないときの連絡先 ---
+   銀行振込のときだけ聞く。口座振替は引き落としなので未収がほぼ起きない（木村氏）。
+   「電話が1つしかない」とは言わせず、メールを選べるようにして逃げ道にしている。
+   メールが選ばれた＝予備の電話が無い、と大泉側では読める */
+const YOBI_LABEL = {
+  tel2:   '別の電話番号',
+  daihyo: '代表者・オーナーの携帯',
+  mail:   'メールでの連絡をご希望'
+};
+const yobiValue = () => {
+  const r = document.querySelector('#yobiWrap input[name="yobi"]:checked');
+  return r ? r.value : '';
+};
+const needYobi = () => payValue() === '銀行振込';
+
+function applyYobi(){
+  $('fldYobi').classList.toggle('hide', !needYobi());
+  const y = yobiValue();
+  const needTel = needYobi() && (y === 'tel2' || y === 'daihyo');
+  $('yobiTelBox').classList.toggle('hide', !needTel);
+  if(y === 'daihyo'){
+    $('yobiTelLab').innerHTML = '代表者・オーナーの携帯番号<span class="req">必須</span>';
+    $('yobiTelGuide').innerHTML = '店舗が留守のときでも繋がる番号をご記入ください。'
+      + '\n<span class="ex">【例】090-0000-0000</span>';
+  }else{
+    $('yobiTelLab').innerHTML = '電話番号<span class="req">必須</span>';
+    $('yobiTelGuide').innerHTML = '上とは違う番号をご記入ください。'
+      + '\n<span class="ex">【例】090-0000-0000</span>';
+  }
+}
+document.querySelectorAll('#payWrap input[name="pay"]').forEach(function(r){
+  r.addEventListener('change', applyYobi); });
+document.querySelectorAll('#yobiWrap input[name="yobi"]').forEach(function(r){
+  r.addEventListener('change', applyYobi); });
+
 /* --- 請求書の送り先（本社／現場／別の宛先）---
    空欄で「契約者と同じ」を表すのは分かりにくいので、選んでもらって実際の値を入れる。
    本社・現場を選んだ間は元の欄に追随させ、お客様が直に触れないようにする */
@@ -739,6 +818,16 @@ function validate(){
     $('e_pay').classList.add('show');
     if(!first) first = $('payWrap');
   }
+  if(shown($('cardPay')) && shown($('fldYobi'))){
+    if(!yobiValue()){
+      $('e_yobi').classList.add('show');
+      if(!first) first = $('yobiWrap');
+    }else if(shown($('yobiTelBox')) && !val('f_yobitel')){
+      $('f_yobitel').classList.add('bad');
+      $('e_yobitel').classList.add('show');
+      if(!first) first = $('f_yobitel');
+    }
+  }
   if(first){
     first.scrollIntoView({behavior:'smooth', block:'center'});
     if(first.focus) first.focus({preventScroll:true});
@@ -762,7 +851,12 @@ function buildConfirm(target){
     });
     html += '</dl>';
     if(g.sec.startsWith('2.') && shown($('cardPay'))){
-      html += head('お支払い方法') + '<dl>' + row('お支払い方法', payValue()) + '</dl>';
+      html += head('お支払い方法') + '<dl>' + row('お支払い方法', payValue());
+      if(shown($('fldYobi'))){
+        html += row('繋がらないときのご連絡先', YOBI_LABEL[yobiValue()] || '');
+        if(shown($('yobiTelBox'))) html += row('その電話番号', val('f_yobitel'));
+      }
+      html += '</dl>';
     }
   });
   target.innerHTML = html;
@@ -795,7 +889,9 @@ $('btnSend').addEventListener('click', async () => {
   const payload = {
     key: SEND_KEY,
     keiyaku_shurui: KIND_LABEL[kindValue()] || '',
-    shiharai: shown($('cardPay')) ? payValue() : ''
+    shiharai: shown($('cardPay')) ? payValue() : '',
+    yobi:     shown($('fldYobi')) ? (YOBI_LABEL[yobiValue()] || '') : '',
+    yobi_tel: shown($('yobiTelBox')) ? val('f_yobitel') : ''
   };
   FIELDS.forEach(g => g.items.forEach(f => {
     payload[f.key] = shown($(f.id).closest('.field')) ? val(f.id) : '';
@@ -827,6 +923,7 @@ if(!GAS_URL){
 
 initKind();
 applyBill();
+applyYobi();
 </script>
 </body>
 </html>
