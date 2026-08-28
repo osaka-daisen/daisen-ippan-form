@@ -85,6 +85,18 @@
   .toolbar{display:flex; gap:8px; padding:11px 15px; flex-wrap:wrap; align-items:center;
     border-bottom:1px solid var(--line2); background:#fbfcfd}
   .stage{padding:14px; background:#e9edf1; overflow:auto}
+
+  /* ===== 作成履歴 ===== */
+  .hist{border-bottom:1px solid var(--line2); background:#fbfcfd}
+  .hist>summary{cursor:pointer; padding:10px 15px; font-size:12.5px; font-weight:700; color:var(--sub)}
+  .hist .hbody{padding:0 15px 14px}
+  .hist table{width:100%; border-collapse:collapse; font-size:12px}
+  .hist th,.hist td{border:1px solid var(--line2); padding:5px 7px; text-align:left; vertical-align:middle}
+  .hist th{background:#f1f4f7; font-weight:700; white-space:nowrap}
+  .hist td.num{text-align:right; white-space:nowrap}
+  .hist td.t{white-space:nowrap; color:var(--sub)}
+  .hist .hact{white-space:nowrap}
+  .hist .hact button{margin-right:4px}
   .msg{font-size:12.5px; border-radius:8px; padding:9px 12px; margin-bottom:12px;
     background:#fff7ed; border:1px solid #f0d5b8; color:#8a5220}
   .msg.ok{background:var(--chip); border-color:#bfe0d6; color:var(--accent-d)}
@@ -154,8 +166,13 @@
   }
   .doc2 .art{margin:0 0 2.6mm}
   .doc2 .ah{font-size:12px; font-weight:700; margin:0 0 0.8mm}
-  .doc2 .art ol{margin:0; padding-left:6mm; font-size:11.5px; line-height:1.7}
+  /* 条文の文字サイズは fitKeiyaku() が --artfs を決める（内容が増えても1枚に収める） */
+  .doc2 .art ol{margin:0; padding-left:6mm; font-size:var(--artfs,11.5px); line-height:1.7}
   .doc2 .art li{margin:0 0 0.4mm; text-align:justify}
+  /* 電子版は第9条・第10条が増えるので、条文だけ少し詰めて1枚に収める */
+  .doc2.denshi .art{margin:0 0 1.6mm}
+  .doc2.denshi .ah{font-size:11.5px}
+  .doc2.denshi .art ol{line-height:1.56}
   .doc2 .rh{
     font-size:12px; font-weight:700; text-align:center; border:1px solid #000;
     background:#f2f2f2; padding:1mm; margin:0 0 2mm;
@@ -206,7 +223,8 @@
     body.a5 .doc{width:246mm; min-height:auto; padding:3mm; zoom:.82}
     body.half .doc{width:246mm; min-height:181mm; padding:3mm; zoom:.82; box-shadow:none}
     /* 契約書は印刷時だけ原寸に戻す（画面は縮小プレビュー） */
-    .doc2{box-shadow:none; margin:0}
+    /* min-height:297mm は用紙の高さちょうどで、丸め誤差で白紙の2枚目が出る */
+    .doc2{box-shadow:none; margin:0; min-height:auto}
     body.ka3 .doc2{zoom:1 !important}
     body.ka4 .doc2{zoom:.707 !important}
   }
@@ -282,6 +300,10 @@
             <label class="f"><span class="lab">代表者 役職・氏名</span><input id="daihyo"></label>
             <label class="f"><span class="lab">現場名</span><input id="j_name"></label>
             <label class="f"><span class="lab">ビル・マンション名</span><input id="j_bldg"></label>
+            <div class="full btnrow" style="margin-top:-2px">
+              <button type="button" class="mini" id="btnSplitBldg">現場住所からビル名を切り出す</button>
+              <span class="hint" style="margin:0">お客様は住所に続けて書かれます。登録シートのビル名欄が要るときだけ押してください</span>
+            </div>
             <label class="f full"><span class="lab">現場住所</span><input id="j_addr"></label>
             <label class="f"><span class="lab">現場の電話番号</span><input id="j_tel"></label>
             <label class="f"><span class="lab">現場ご担当者名</span><input id="j_tanto"></label>
@@ -565,6 +587,11 @@
           <button type="button" class="docbtn otsubtn" data-otsu="osaka">大阪</button>
           <button type="button" class="docbtn otsubtn" data-otsu="sakai">堺</button>
         </span>
+        <span id="tsuBar" class="hide" style="display:none; align-items:center; gap:6px">
+          <span class="hint" style="margin:0">通数</span>
+          <button type="button" class="docbtn tsubtn" data-tsu="copy">1通＋写し</button>
+          <button type="button" class="docbtn tsubtn" data-tsu="two">2通（各1通）</button>
+        </span>
         <span style="flex:1"></span>
         <button type="button" class="primary" id="btnPrint">PDFにする</button>
       </div>
@@ -582,6 +609,21 @@
           </span>
         </span>
       </div>
+      <!-- 作成履歴（このPCのブラウザに保存）。誰にいつ何を出したかを後から追える -->
+      <details class="hist noprint" id="histBox">
+        <summary>作成履歴 <span id="histCount" class="hint" style="margin:0"></span></summary>
+        <div class="hbody">
+          <div class="btnrow" style="margin-bottom:8px">
+            <button type="button" class="mini" id="btnHistCsv">CSVで書き出す</button>
+            <button type="button" class="mini" id="btnHistClear">履歴を全部消す</button>
+          </div>
+          <div id="histWrap"></div>
+          <div class="hint">
+            「PDFにする」を押したときに1件記録します。保存先は<b>このPCのブラウザ</b>です
+            （他のPCとは共有されません）。「呼び出す」で当時の入力内容に戻せます。
+          </div>
+        </div>
+      </details>
       <style id="pageSize">@page{size:A5 landscape; margin:0}</style>
       <div class="stage">
         <div class="doc" id="doc">
@@ -957,6 +999,27 @@ function renderSatsuki(){
   txt('s_daihyo', v('daihyo'));
 }
 
+/* --- 現場住所からビル名を切り出す ---
+   お客様には住所1本で書いてもらう（分けて書いてもらっても結局まざるため）。
+   登録シートだけ「ﾋﾞﾙ・ﾏﾝｼｮﾝ名」欄が独立しているので、必要なときだけここで分ける。
+   当て推量なので、外したら手で直せばよい */
+function splitBldgFromAddr(){
+  const a = v('j_addr');
+  if(!a){ msg('先に現場住所を入れてください。', 'ng'); return; }
+  // まず空白で切る。無ければ建物らしい語の手前で切る
+  // 番地（数字と-の並び）の直後の空白で切る。最後の空白だと「〇〇ビル」と「3F」に割れてしまう
+  let m = a.match(/^(.*?[0-9０-９][0-9０-９\-−ー－]*)[\s　]+(.+)$/);
+  if(!m){
+    // 空白が無い場合は、建物らしい語の手前で切る
+    m = a.match(/^(.*?[0-9０-９][0-9０-９\-−ー－]*)([^\s　]*(?:ビル|ビルヂング|マンション|ハイツ|コーポ|レジデンス|タワー|プラザ|パレス|ハウス|荘|団地|センター)[^\s　]*)$/);
+  }
+  if(!m){ msg('区切れる場所が見つかりませんでした。お手数ですが手で分けてください。', 'ng'); return; }
+  $('j_addr').value = m[1];
+  $('j_bldg').value = m[2];
+  render();
+  msg('「' + m[1] + '」と「' + m[2] + '」に分けました。違っていれば手で直してください。', 'ok');
+}
+
 /* 契約開始日から1年（前日まで）を入れる。既存の産廃ツールと同じ考え方 */
 function fillKikanFromStart(){
   const base = v('sk_kikan_s') || v('keiyaku_start');
@@ -997,6 +1060,7 @@ function arts(mansion, o){
     ['第3条（料金・支払）', [
       '委託料金は本契約書「料金」欄のとおり（税別）。',
       '乙は毎月末日締めで請求書を発行する。支払方法は本契約書「支払方法」欄のとおりとし、口座振替の場合は翌月22日に甲の指定口座から引き落とすものとする。銀行振込の場合は翌月末日までに乙の指定口座へ振込むものとし、振込手数料は甲負担とする。',
+      '月の途中で本業務を開始し、又は終了した場合の当月の料金は、当該月の暦日数を基準とする日割り計算による（開始日及び終了日を含む）。ただし収集1回あたりの単価により料金を定める場合は、当該月に実施した収集回数により計算する。',
       '料金改定が必要な場合は、甲乙協議のうえ決定する。']],
     ['第4条（契約期間）', [
       '契約期間は本契約書記載の開始日から1年間とする。',
@@ -1033,7 +1097,11 @@ function artHtml(list){
   }).join('');
 }
 
-const CLOSE_STAMP = '本契約締結の証として本書1通を作成し、甲乙記名押印のうえ、原本は甲が保管し、乙は複写機によるコピーを保存するものとする。';
+/* 押印版の末尾は2通り。印紙が要る契約なら通数だけ印紙代が増えるので現行運用（1通＋写し）も残す */
+const CLOSE_COPY = '本契約締結の証として本書1通を作成し、甲乙記名押印のうえ、原本は甲が保管し、乙は複写機によるコピーを保存する。'
+  + '当該コピーは原本と相違ないことを甲乙が確認したものとする。';
+const CLOSE_TWO  = '本契約締結の証として本書2通を作成し、甲乙記名押印のうえ、各自1通を保管する。';
+const CLOSE_STAMP = CLOSE_COPY;
 const CLOSE_DENSHI = '本契約は電子的方法により締結され、甲乙双方の電子的同意をもって書面と同等の効力を有する（電子署名法第3条）。';
 
 function wareki(s){
@@ -1059,6 +1127,7 @@ function renderKeiyaku(){
         : '甲の事業活動に伴い排出される事業系一般廃棄物')
     + 'の収集運搬業務について、以下のとおり契約を締結する。';
   $('c_arts').innerHTML = artHtml(arts(mansion, o)) + (stamp ? '' : artHtml(ART_E));
+  $('doc2').classList.toggle('denshi', !stamp);   // 条文が増える電子版だけ詰める
 
   document.querySelectorAll('#doc2 .lbl-jname').forEach(function(e){
     e.textContent = mansion ? '共同住宅名' : '収集先事業所名'; });
@@ -1093,8 +1162,31 @@ function renderKeiyaku(){
   txt('c_otsu_kyoka', o.kyoka);
   $('c_otsu_daihyo').innerHTML = esc(o.daihyo)
     + (stamp ? '<span class="stampmark">㊞</span>' : '');
-  $('c_closing').textContent = stamp ? CLOSE_STAMP : CLOSE_DENSHI;
+  $('c_closing').textContent = stamp ? (tsuType === 'two' ? CLOSE_TWO : CLOSE_COPY) : CLOSE_DENSHI;
   $('c_date').textContent    = wareki(v('teiketsu_bi'));
+  fitKeiyaku();
+}
+
+/* 契約書は必ずA3横1枚に収める。
+   条文が増えたり社名・住所が長くて行が増えたときは、条文の文字を少しずつ小さくする。
+   画面は zoom で縮小表示しているので、実寸に直してから用紙の高さと比べること。 */
+function fitKeiyaku(){
+  const el = $('doc2');
+  if(!el || el.classList.contains('hide')) return;
+  // 用紙297mm − 上下余白10mmずつ ＝ 中身に使える高さ。安全代を2mm見る
+  const LIMIT = (297 - 20 - 2) * 96 / 25.4;
+  const steps = docType === 'stamp'
+    ? [11.5, 11.2, 10.9, 10.6, 10.3, 10]
+    : [11,   10.7, 10.4, 10.1,  9.8,  9.5];
+  const zoom = parseFloat(getComputedStyle(el).zoom) || 1;
+  // .doc2 自身は min-height:297mm なので高さを見ても縮まない。左右の段の中身を測る
+  const cols = [...el.children];
+  const tallest = () => Math.max.apply(null,
+    cols.map(c => c.getBoundingClientRect().height / zoom));
+  for(let i = 0; i < steps.length; i++){
+    el.style.setProperty('--artfs', steps[i] + 'px');
+    if(tallest() <= LIMIT) break;
+  }
 }
 
 /* --- 建物の種別（事業所／共同住宅） --- */
@@ -1121,6 +1213,18 @@ function setOtsu(type){
 document.querySelectorAll('.otsubtn').forEach(function(b){
   b.addEventListener('click', function(){ setOtsu(b.dataset.otsu); }); });
 
+/* --- 押印版の通数（1通＋写し／2通) --- */
+let tsuType = 'copy';
+function setTsu(type){
+  tsuType = type === 'two' ? 'two' : 'copy';
+  document.querySelectorAll('.tsubtn').forEach(function(b){
+    b.classList.toggle('on', b.dataset.tsu === tsuType); });
+  renderKeiyaku();
+  try{ localStorage.setItem('daisen_ippan_tsu', tsuType); }catch(e){}
+}
+document.querySelectorAll('.tsubtn').forEach(function(b){
+  b.addEventListener('click', function(){ setTsu(b.dataset.tsu); }); });
+
 /* --- 書類の切り替え --- */
 let docType = 'sheet';
 function setDoc(type){
@@ -1142,6 +1246,9 @@ function setDoc(type){
   $('bldgBar').style.display = keiyaku ? 'inline-flex' : 'none';
   $('otsuBar').classList.toggle('hide', !keiyaku);
   $('otsuBar').style.display = keiyaku ? 'inline-flex' : 'none';
+  // 通数は押印版だけの話（電子版は原本が1つ）
+  $('tsuBar').classList.toggle('hide', type !== 'stamp');
+  $('tsuBar').style.display = type === 'stamp' ? 'inline-flex' : 'none';
 
   document.querySelectorAll('.docbtn').forEach(b => b.classList.toggle('on', b.dataset.doc === type));
   $('btnPrint').textContent = sheet   ? '登録シートをPDFにする'
@@ -1179,6 +1286,7 @@ document.querySelectorAll('.docbtn').forEach(b =>
 document.querySelectorAll('#skKinds input').forEach(b =>
   b.addEventListener('change', render));
 $('btnKikanFromStart').addEventListener('click', fillKikanFromStart);
+$('btnSplitBldg').addEventListener('click', splitBldgFromAddr);
 /* 廃棄物の種類のよく使う書き方をワンタップで入れる */
 /* 選んだ曜日から「週6回（月曜日〜土曜日）」のような文言を作る */
 const DAYS = ['月','火','水','木','金','土','日'];
@@ -1311,12 +1419,154 @@ setBldg(savedBldg);
 let savedOtsu = 'osaka';
 try{ savedOtsu = localStorage.getItem('daisen_ippan_otsu') || 'osaka'; }catch(e){}
 setOtsu(savedOtsu);
+let savedTsu = 'copy';
+try{ savedTsu = localStorage.getItem('daisen_ippan_tsu') || 'copy'; }catch(e){}
+setTsu(savedTsu);
 let savedDoc = 'sheet';
 try{ savedDoc = localStorage.getItem('daisen_ippan_doctype') || 'sheet'; }catch(e){}
 setDoc(savedDoc);
 
+/* ============================================================
+   作成履歴
+   「PDFにする」を押すたびに1件ためる。保存先はこのPCのブラウザ（localStorage）。
+   入力内容のスナップショットも一緒に持つので、あとから同じ契約書を出し直せる。
+   ============================================================ */
+const HIST      = 'daisen_ippan_hist_v1';
+const HIST_MAX  = 200;
+const DOC_LABEL = { sheet:'登録シート', stamp:'契約書（押印）', denshi:'契約書（電子）', satsuki:'さつき依頼書' };
+
+function histLoad(){
+  try{ return JSON.parse(localStorage.getItem(HIST) || '[]') || []; }catch(e){ return []; }
+}
+function histSave(list){
+  try{ localStorage.setItem(HIST, JSON.stringify(list.slice(0, HIST_MAX))); }
+  catch(e){ msg('履歴を保存できませんでした（ブラウザの保存容量がいっぱいの可能性）。', 'ng'); }
+}
+function snapshot(){
+  const o = {
+    _gomi: [...document.querySelectorAll('#gomiChecks input')].map(b=>b.checked),
+    _days: [...document.querySelectorAll('#hindoDays input')].map(b=>b.checked),
+    _sk:   [...document.querySelectorAll('#skKinds input')].map(b=>b.checked)
+  };
+  INPUTS.forEach(id => o[id] = v(id));
+  return o;
+}
+function nowStr(){
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate())
+    + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+}
+function histAdd(){
+  const keiyaku = docType === 'stamp' || docType === 'denshi';
+  const list = histLoad();
+  list.unshift({
+    t:      nowStr(),
+    doc:    docType,
+    bldg:   keiyaku ? bldgType : '',
+    otsu:   keiyaku ? otsuType : '',
+    tsu:    docType === 'stamp' ? tsuType : '',
+    h_name: v('h_name'),
+    j_name: join([v('j_name'), v('j_bldg')], '　'),
+    gaku:   v('keiyaku_gaku'),
+    start:  v('keiyaku_start'),
+    tanto:  v('keiyaku_tanto'),
+    tokui:  v('tokui_no'),
+    data:   snapshot()
+  });
+  histSave(list);
+  renderHist();
+}
+function histCols(h){
+  const keiyaku = h.doc === 'stamp' || h.doc === 'denshi';
+  return [
+    h.t,
+    (DOC_LABEL[h.doc] || h.doc)
+      + (keiyaku ? '／' + (h.bldg === 'mansion' ? '共同住宅' : '事業所') : '')
+      + (keiyaku ? '／' + (h.otsu === 'sakai' ? '堺' : '大阪') : '')
+      + (h.tsu   ? '／' + (h.tsu === 'two' ? '2通' : '1通＋写し') : ''),
+    h.h_name || '',
+    h.j_name || '',
+    h.gaku ? Number(String(h.gaku).replace(/[^\d]/g,'') || 0).toLocaleString('ja-JP') : '',
+    h.start || '',
+    h.tanto || ''
+  ];
+}
+const HIST_HEAD = ['作成日時','書類','委託者（甲）','現場','契約額','開始日','作成者'];
+function renderHist(){
+  const list = histLoad();
+  $('histCount').textContent = list.length ? '（' + list.length + '件）' : '（まだありません）';
+  if(!list.length){
+    $('histWrap').innerHTML = '<div class="hint" style="margin:0">'
+      + 'まだ履歴はありません。「PDFにする」を押すと1件ずつたまります。</div>';
+    return;
+  }
+  const rows = list.map(function(h, i){
+    const c = histCols(h);
+    return '<tr><td class="t">' + esc(c[0]) + '</td><td>' + esc(c[1]) + '</td><td>' + esc(c[2])
+      + '</td><td>' + esc(c[3]) + '</td><td class="num">' + esc(c[4]) + '</td><td class="t">'
+      + esc(c[5]) + '</td><td>' + esc(c[6]) + '</td>'
+      + '<td class="hact"><button type="button" class="mini" data-hload="' + i + '">呼び出す</button>'
+      + '<button type="button" class="mini" data-hdel="' + i + '">削除</button></td></tr>';
+  }).join('');
+  $('histWrap').innerHTML = '<table><tr>'
+    + HIST_HEAD.map(function(x){ return '<th>' + x + '</th>'; }).join('') + '<th></th></tr>'
+    + rows + '</table>';
+}
+function histRestore(i){
+  const h = histLoad()[i];
+  if(!h || !h.data) return;
+  if(!confirm('いま入力している内容を、この履歴（' + h.t + '／' + (h.h_name || '無題') + '）で上書きします。よろしいですか？')) return;
+  const o = h.data;
+  INPUTS.forEach(id => { if($(id)) $(id).value = o[id] != null ? o[id] : ''; });
+  [['#gomiChecks input','_gomi'],['#hindoDays input','_days'],['#skKinds input','_sk']].forEach(function(p){
+    if(!Array.isArray(o[p[1]])) return;
+    [...document.querySelectorAll(p[0])].forEach(function(b, n){
+      if(o[p[1]][n] != null) b.checked = o[p[1]][n]; });
+  });
+  if(h.bldg) setBldg(h.bldg);
+  if(h.otsu) setOtsu(h.otsu);
+  if(h.tsu)  setTsu(h.tsu);
+  if(h.doc)  setDoc(h.doc);
+  render();
+  msg('履歴（' + h.t + '）の内容を読み込みました。', 'ok');
+}
+$('histWrap').addEventListener('click', function(e){
+  const b = e.target.closest('button');
+  if(!b) return;
+  if(b.dataset.hload != null) histRestore(Number(b.dataset.hload));
+  if(b.dataset.hdel  != null){
+    const list = histLoad();
+    const h = list[Number(b.dataset.hdel)];
+    if(!h || !confirm('この履歴を1件削除します。よろしいですか？\n' + h.t + '／' + (h.h_name || ''))) return;
+    list.splice(Number(b.dataset.hdel), 1);
+    histSave(list);
+    renderHist();
+  }
+});
+$('btnHistCsv').addEventListener('click', function(){
+  const list = histLoad();
+  if(!list.length){ msg('書き出す履歴がありません。', 'ng'); return; }
+  const q = s => '"' + String(s == null ? '' : s).replace(/"/g,'""') + '"';
+  const csv = [HIST_HEAD.concat(['得意先No.']).map(q).join(',')]
+    .concat(list.map(h => histCols(h).concat([h.tokui || '']).map(q).join(',')))
+    .join('\r\n');
+  // ExcelでそのままUTF-8と分かるようBOMを付ける
+  const url = URL.createObjectURL(new Blob(['﻿' + csv], {type:'text/csv;charset=utf-8'}));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '契約書作成履歴_' + nowStr().replace(/[- :]/g,'') + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+$('btnHistClear').addEventListener('click', function(){
+  if(!confirm('作成履歴をすべて削除します。元に戻せません。よろしいですか？')) return;
+  try{ localStorage.removeItem(HIST); }catch(e){}
+  renderHist();
+});
+renderHist();
+
 /* --- 操作 --- */
-$('btnPrint').addEventListener('click', () => window.print());
+$('btnPrint').addEventListener('click', () => { histAdd(); window.print(); });
 $('btnLoad').addEventListener('click', () => {
   const id = prompt('案件ID（通知メールに書かれています）を貼り付けてください');
   if(id) loadRecord(id.trim());

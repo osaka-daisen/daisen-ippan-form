@@ -256,16 +256,10 @@
         </div>
 
         <div class="field">
-          <label class="lab" for="f_jbldg">ビル・マンション名／階数<span class="opt">任意</span></label>
-          <div class="guide">建物に入っている場合はご記入ください。
-<span class="ex">【例】〇〇ビル 3F　／　〇〇マンション 1階店舗</span></div>
-          <input id="f_jbldg" type="text">
-        </div>
-
-        <div class="field">
           <label class="lab" for="f_jaddr">現場住所<span class="req">必須</span></label>
-          <div class="guide">ごみが実際に出る場所の住所です。マンション・アパートの場合、排出される部屋番号もすべてご記入ください。
-<span class="ex">【例】大阪市東住吉区〇〇1-2-3</span></div>
+          <div class="guide">ごみが実際に出る場所の住所です。ビル名・階数もそのまま続けてご記入ください。
+マンション・アパートの場合は、排出される部屋番号もすべてご記入ください。
+<span class="ex">【例】大阪市東住吉区〇〇1-2-3　〇〇ビル 3F</span></div>
           <input id="f_jaddr" type="text" placeholder="大阪市東住吉区〇〇1-2-3">
           <div class="err" id="e_jaddr">ご入力ください</div>
         </div>
@@ -555,7 +549,6 @@ const FIELDS = [
   { sec: '2. 回収に伺う場所',
     items: [
       { id:'f_jname',  key:'j_name',  label:'現場名',            req:true },
-      { id:'f_jbldg',  key:'j_bldg',  label:'ビル・マンション名', req:false },
       { id:'f_jaddr',  key:'j_addr',  label:'現場住所',          req:true },
       { id:'f_jtel',   key:'j_tel',   label:'現場の電話番号',    req:true },
       { id:'f_jtanto', key:'j_tanto', label:'現場ご担当者名',    req:true },
