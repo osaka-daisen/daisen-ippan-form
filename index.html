@@ -340,29 +340,60 @@
       <div class="chead"><span class="n">4</span>請求書の送り先</div>
       <div class="cbody">
 
-        <div class="notice noprint" style="margin-bottom:16px">
-          請求先が<strong>「1. ご契約者の情報」と同じ場合は、下の3つは空欄で結構です</strong>。
+        <div class="field">
+          <label class="lab">請求書はどちらへお送りしますか<span class="req">必須</span></label>
+          <div class="guide">お選びいただくと、下の3つに自動で入ります。</div>
+          <div class="pay" id="billWrap">
+
+            <label class="payopt">
+              <input type="radio" name="bill" value="honsha" id="billHonsha" checked>
+              <span>
+                <span class="ttl">ご契約者（本社）へ</span>
+                <span class="sub2" id="billHonshaSub">「1. ご契約者の情報」と同じ住所にお送りします。</span>
+              </span>
+            </label>
+
+            <label class="payopt">
+              <input type="radio" name="bill" value="genba" id="billGenba">
+              <span>
+                <span class="ttl">回収に伺う場所（現場）へ</span>
+                <span class="sub2" id="billGenbaSub">「2. 回収に伺う場所」と同じ住所にお送りします。</span>
+              </span>
+            </label>
+
+            <label class="payopt">
+              <input type="radio" name="bill" value="other" id="billOther">
+              <span>
+                <span class="ttl">別の宛先へ</span>
+                <span class="sub2">経理部・管理会社など、上のどちらとも違う場合。下の3つにご記入ください。</span>
+              </span>
+            </label>
+
+          </div>
         </div>
 
         <div class="field">
-          <label class="lab" for="f_sname">請求先名<span class="opt">任意</span></label>
-          <div class="guide">請求書に記載するお宛名です。ご契約者名と異なる場合のみご記入ください。
+          <label class="lab" for="f_sname">請求先名<span class="req" id="req_sname">必須</span></label>
+          <div class="guide">請求書に記載するお宛名です。
 <span class="ex">【例】〇〇株式会社　経理部　御中</span></div>
-          <input id="f_sname" type="text" placeholder="（ご契約者名と同じ場合は空欄）">
+          <input id="f_sname" type="text">
+          <div class="err" id="e_sname">ご入力ください</div>
         </div>
 
         <div class="field">
-          <label class="lab" for="f_saddr">請求先住所<span class="opt">任意</span></label>
-          <div class="guide">請求書をお届けするご住所です。ご契約者住所と異なる場合のみご記入ください。
+          <label class="lab" for="f_saddr">請求先住所<span class="req" id="req_saddr">必須</span></label>
+          <div class="guide">請求書をお届けするご住所です。
 <span class="ex">【例】大阪市中央区〇〇町1-2-3　〇〇ビル5F　経理部宛</span></div>
-          <input id="f_saddr" type="text" placeholder="（ご契約者住所と同じ場合は空欄）">
+          <input id="f_saddr" type="text">
+          <div class="err" id="e_saddr">ご入力ください</div>
         </div>
 
         <div class="field">
-          <label class="lab" for="f_stel">請求先の電話番号<span class="opt">任意</span></label>
-          <div class="guide">ご契約者の電話番号と異なる場合のみご記入ください。
+          <label class="lab" for="f_stel">請求先の電話番号<span class="req" id="req_stel">必須</span></label>
+          <div class="guide">請求についてご連絡する際の番号です。
 <span class="ex">【例】06-1234-5678</span></div>
-          <input id="f_stel" type="tel" inputmode="tel" placeholder="（ご契約者と同じ場合は空欄）">
+          <input id="f_stel" type="tel" inputmode="tel">
+          <div class="err" id="e_stel">ご入力ください</div>
         </div>
 
         <div class="field">
@@ -528,9 +559,9 @@ const FIELDS = [
     ]},
   { sec: '4. 請求書の送り先',
     items: [
-      { id:'f_sname',     key:'s_name',    label:'請求先名',                 req:false },
-      { id:'f_saddr',     key:'s_addr',    label:'請求先住所',               req:false },
-      { id:'f_stel',      key:'s_tel',     label:'請求先の電話番号',         req:false },
+      { id:'f_sname',     key:'s_name',    label:'請求先名',                 req:true },
+      { id:'f_saddr',     key:'s_addr',    label:'請求先住所',               req:true },
+      { id:'f_stel',      key:'s_tel',     label:'請求先の電話番号',         req:true },
       { id:'f_keiri',     key:'keiri',     label:'経理ご担当者名',           req:false },
       { id:'f_keiri_tel', key:'keiri_tel', label:'経理ご担当者の電話番号',   req:false },
       { id:'f_smail',     key:'s_mail',    label:'請求書送付先メール',       req:false, mail:true },
@@ -551,6 +582,68 @@ const payValue = () => {
   const r = document.querySelector('#payWrap input[name="pay"]:checked');
   return r ? r.value : '';
 };
+
+/* --- 請求書の送り先（本社／現場／別の宛先）---
+   空欄で「契約者と同じ」を表すのは分かりにくいので、選んでもらって実際の値を入れる。
+   本社・現場を選んだ間は元の欄に追随させ、お客様が直に触れないようにする */
+const billValue = () => {
+  const r = document.querySelector('#billWrap input[name="bill"]:checked');
+  return r ? r.value : 'honsha';
+};
+const BILL_SRC = {
+  honsha: ['f_hname','f_haddr','f_htel'],
+  genba:  ['f_jname','f_jaddr','f_jtel']
+};
+const BILL_DST = ['f_sname','f_saddr','f_stel'];
+const BILL_LABEL = {
+  honsha: 'ご契約者（本社）へ',
+  genba:  '回収に伺う場所（現場）へ',
+  other:  '別の宛先へ'
+};
+
+function applyBill(){
+  const mode = billValue();
+  const src  = BILL_SRC[mode];
+  BILL_DST.forEach((id, i) => {
+    const el = $(id);
+    if(src){
+      el.value = val(src[i]);
+      el.readOnly = true;
+      el.style.background = '#f4f6f9';
+      el.style.color = 'var(--sub)';
+    }else{
+      el.readOnly = false;
+      el.style.background = '';
+      el.style.color = '';
+    }
+    // 「別の宛先」のときだけ必須。それ以外は自動で入るので必須表示を消す
+    const badge = $('req_' + id.slice(2));
+    if(badge) badge.classList.toggle('hide', !!src);
+  });
+  // 選択肢の説明に、いま入る住所を出して確認できるようにする
+  $('billHonshaSub').textContent = val('f_haddr')
+    ? '「1. ご契約者の情報」の住所（' + val('f_haddr') + '）にお送りします。'
+    : '「1. ご契約者の情報」と同じ住所にお送りします。';
+  $('billGenbaSub').textContent = val('f_jaddr')
+    ? '「2. 回収に伺う場所」の住所（' + val('f_jaddr') + '）にお送りします。'
+    : '「2. 回収に伺う場所」と同じ住所にお送りします。';
+}
+let prevBill = 'honsha';
+document.querySelectorAll('#billWrap input[name="bill"]').forEach(function(r){
+  r.addEventListener('change', function(){
+    // 「別の宛先」に切り替えた瞬間だけ空にする。
+    // 本社・現場の住所が残っていると、直したつもりで同じ住所を送ってしまう
+    if(billValue() === 'other' && prevBill !== 'other'){
+      BILL_DST.forEach(id => $(id).value = '');
+    }
+    prevBill = billValue();
+    applyBill();
+    if(billValue() === 'other') $('f_sname').focus();
+  });
+});
+// 参照元をあとから直しても請求先がずれないよう、入力のたび追随させる
+['f_hname','f_haddr','f_htel','f_jname','f_jaddr','f_jtel'].forEach(function(id){
+  $(id).addEventListener('input', applyBill); });
 
 /* --- ご契約の種類（一廃／産廃／両方）---
    ⚠ これはお客様が選ぶものではなく、大泉衛生が決めるもの。
@@ -665,6 +758,7 @@ function buildConfirm(target){
   const head = (sec) => '<h3>' + (++n) + '. ' + sec.replace(/^\d+\.\s*/, '') + '</h3>';
   FIELDS.forEach(g => {
     html += head(g.sec) + '<dl>';
+    if(g.sec.startsWith('4.')) html += row('お送り先', BILL_LABEL[billValue()]);
     g.items.forEach(f => {
       if(!shown($(f.id).closest('.field'))) return;
       html += row(f.label, val(f.id));
@@ -735,6 +829,7 @@ if(!GAS_URL){
 }
 
 initKind();
+applyBill();
 </script>
 </body>
 </html>
