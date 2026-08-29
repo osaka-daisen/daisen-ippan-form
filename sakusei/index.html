@@ -320,6 +320,10 @@
             <label class="f full"><span class="lab">請求先名</span><input id="s_name"></label>
             <label class="f full"><span class="lab">請求先住所</span><input id="s_addr"></label>
             <label class="f"><span class="lab">請求先の電話番号</span><input id="s_tel"></label>
+            <div class="full btnrow" style="margin-top:-2px">
+              <button type="button" class="mini" id="btnSeikyuSame">請求先をご契約者と同じにする</button>
+              <span class="hint" style="margin:0">空欄のまま届いた案件は「ご契約者と同じ」という意味です</span>
+            </div>
             <label class="f"><span class="lab">経理ご担当者名</span><input id="keiri"></label>
             <label class="f"><span class="lab">経理ご担当者の電話番号</span><input id="keiri_tel"></label>
             <label class="f full"><span class="lab">請求書送付先メール</span><input id="s_mail"></label>
@@ -999,6 +1003,25 @@ function renderSatsuki(){
   txt('s_daihyo', v('daihyo'));
 }
 
+/* --- 請求先をご契約者と同じにする ---
+   フォームを直す前（2026-08-17より前）の案件と手入力は、請求先が空欄で届く。
+   空欄＝ご契約者と同じ、という意味なので、実際の値を入れて登録シートに出す。
+   すでに入っている欄は触らない（別の宛先を指定された案件を壊さないため） */
+function fillSeikyuFromKeiyaku(quiet){
+  const pairs = [['s_name','h_name'], ['s_addr','h_addr'], ['s_tel','h_tel']];
+  const done = [];
+  pairs.forEach(function(pp){
+    if(!v(pp[0]) && v(pp[1])){ $(pp[0]).value = v(pp[1]); done.push(pp[0]); }
+  });
+  if(done.length) render();
+  if(!quiet){
+    msg(done.length
+      ? '請求先の空欄' + done.length + '件にご契約者の情報を入れました。'
+      : '空欄がないため、そのままにしました。', done.length ? 'ok' : 'ng');
+  }
+  return done.length;
+}
+
 /* --- 現場住所からビル名を切り出す ---
    お客様には住所1本で書いてもらう（分けて書いてもらっても結局まざるため）。
    登録シートだけ「ﾋﾞﾙ・ﾏﾝｼｮﾝ名」欄が独立しているので、必要なときだけここで分ける。
@@ -1287,6 +1310,7 @@ document.querySelectorAll('#skKinds input').forEach(b =>
   b.addEventListener('change', render));
 $('btnKikanFromStart').addEventListener('click', fillKikanFromStart);
 $('btnSplitBldg').addEventListener('click', splitBldgFromAddr);
+$('btnSeikyuSame').addEventListener('click', () => fillSeikyuFromKeiyaku(false));
 /* 廃棄物の種類のよく使う書き方をワンタップで入れる */
 /* 選んだ曜日から「週6回（月曜日〜土曜日）」のような文言を作る */
 const DAYS = ['月','火','水','木','金','土','日'];
@@ -1383,8 +1407,12 @@ async function loadRecord(id){
     CUST.forEach(k => { if(d[k] && $(k)) $(k).value = d[k]; });
     // お客様の希望をシステムの語彙に読み替えて、支払方法をあらかじめ入れておく
     if(!v('shiharai_hoho') && PAY_MAP[d.shiharai]) $('shiharai_hoho').value = PAY_MAP[d.shiharai];
+    // 請求先が空欄で届いた案件は「ご契約者と同じ」の意味なので入れておく
+    const filled = fillSeikyuFromKeiyaku(true);
     render();
-    msg('「' + (d.h_name || '') + '」を読み込みました。大泉衛生で決める欄をご入力ください。', 'ok');
+    msg('「' + (d.h_name || '') + '」を読み込みました。'
+      + (filled ? '請求先が空欄だったので、ご契約者の情報を入れています。' : '')
+      + '大泉衛生で決める欄をご入力ください。', 'ok');
   }catch(e){
     msg('通信に失敗しました。もう一度お試しください。', 'ng');
   }
