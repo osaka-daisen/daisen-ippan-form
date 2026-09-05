@@ -320,12 +320,12 @@
             <label class="f"><span class="lab">電話番号</span><input id="h_tel"></label>
             <label class="f"><span class="lab">代表者 役職・氏名</span><input id="daihyo"></label>
             <label class="f"><span class="lab">現場名</span><input id="j_name"></label>
-            <label class="f"><span class="lab">現場のビル・マンション名</span><input id="j_bldg"></label>
+            <label class="f full"><span class="lab">現場住所</span><input id="j_addr"></label>
+            <label class="f full"><span class="lab">現場のビル・マンション名</span><input id="j_bldg"></label>
             <div class="full btnrow" style="margin-top:-2px">
               <button type="button" class="mini" id="btnSplitBldg">現場住所からビル名を切り出す</button>
-              <span class="hint" style="margin:0">お客様は住所に続けて書かれます。登録シートのビル名欄が要るときだけ押してください</span>
+              <span class="hint" style="margin:0">お客様は住所に続けて書かれます。押すと住所からビル名を取り出して、上下に振り分けます</span>
             </div>
-            <label class="f full"><span class="lab">現場住所</span><input id="j_addr"></label>
             <label class="f"><span class="lab">現場の電話番号</span><input id="j_tel"></label>
             <label class="f"><span class="lab">現場ご担当者名</span><input id="j_tanto"></label>
             <label class="f"><span class="lab">交付担当者（産廃）</span><input id="kofu_tanto"></label>
@@ -1085,7 +1085,7 @@ function splitBldgFromAddr(){
   if(!a){ msg('先に現場住所を入れてください。', 'ng'); return; }
   // まず空白で切る。無ければ建物らしい語の手前で切る
   // 番地（数字と-の並び）の直後の空白で切る。最後の空白だと「〇〇ビル」と「3F」に割れてしまう
-  let m = a.match(/^(.*?[0-9０-９][0-9０-９\-−ー－]*)[\s　]+(.+)$/);
+  let m = a.match(/^(.*?[0-9０-９号番][0-9０-９\-−ー－]*)[\s　]+(.+)$/);
   if(!m){
     // 空白が無い場合は、建物らしい語の手前で切る
     m = a.match(/^(.*?[0-9０-９][0-9０-９\-−ー－]*)([^\s　]*(?:ビル|ビルヂング|マンション|ハイツ|コーポ|レジデンス|タワー|プラザ|パレス|ハウス|荘|団地|センター)[^\s　]*)$/);
