@@ -110,28 +110,35 @@
   }
   /* 得意先No. / 現場No. は表の外・上に置く（実物どおり） */
   .doc .topno{
-    display:flex; gap:20mm; justify-content:center; font-size:12px;
+    display:flex; gap:20mm; justify-content:center; font-size:13px;
     margin:0 0 1.5mm; padding-left:12mm;
   }
-  .doc .topno b{font-weight:700; margin-left:3mm; min-width:24mm; display:inline-block}
+  .doc .topno b{font-weight:700; font-size:16px; margin-left:3mm; min-width:24mm; display:inline-block}
 
   .doc table.reg{width:100%; border-collapse:collapse; table-layout:fixed}
   .doc .reg th,.doc .reg td{
-    border:1px solid #000; padding:0.6mm 1.2mm; font-size:12px;
+    border:1px solid #000; padding:0.6mm 1.2mm; font-size:13px;
     vertical-align:middle; line-height:1.3; height:9.6mm;
     text-align:center; word-break:break-word;
   }
-  /* 項目名は細字、記入値は太字（実物と同じ） */
+  /* 項目名は細字、記入値は太字（実物と同じ）。
+     記入値はエクセルの原本（10pt）に合わせて大きくしてある */
   .doc .reg th{font-weight:400; white-space:nowrap; letter-spacing:-.03em}
-  .doc .reg td{font-weight:700}
-  .doc .reg td.ltd{text-align:left; font-weight:400; padding-left:2mm}
+  .doc .reg td{font-weight:700; font-size:16px}
+  /* 定型文が長い行。文字を少し詰めて、記入値を大きくする余地をつくる */
+  .doc .reg td.ltd{text-align:left; font-weight:400; font-size:12.5px; line-height:1.2; padding-left:2mm}
+  /* 定型の文言が長い枠は、枠に収まる大きさにしておく */
+  .doc .reg td.small{font-size:13px}
+  /* 記入した値だけ太字で大きく。定型文と見分けがつくように */
+  .doc .reg .w{font-weight:700; font-size:16px}
+  .doc .reg td.ltd .w,.doc .reg td.small .w{font-size:15px}
   .doc .reg td.blank{height:9mm}
   .doc .reg .tall{height:auto}
-  .doc .empty{color:#bbb; font-weight:400}
+  .doc .empty{color:#bbb; font-weight:400; font-size:13px}
   /* 選んだものを青い丸で囲む（実物と同じ） */
   .doc .on{
     display:inline-block; border:1.3px solid #1f3864; border-radius:50%;
-    padding:0 1.6mm; color:#000;
+    padding:0 1.6mm; color:#000; font-weight:700;
   }
   .doc .off{color:#000}
 
@@ -662,7 +669,7 @@
             </tr>
             <tr><th colspan="3" rowspan="3" class="tall">支払方法</th>
                 <td colspan="17" id="r_pay1"></td></tr>
-            <tr><td colspan="17" id="r_pay2"></td></tr>
+            <tr><td colspan="17" class="small" id="r_pay2"></td></tr>
             <tr><td colspan="17" id="r_pay3"></td></tr>
             <tr>
               <th colspan="3">初回収集日</th><td colspan="3" id="r_shokaishu"></td>
@@ -671,12 +678,12 @@
             </tr>
             <tr>
               <th colspan="3">無料ｻｰﾋﾞｽ期間</th><td colspan="6" id="r_muryo"></td>
-              <td colspan="5" id="r_nichiyou"></td>
+              <td colspan="5" class="small" id="r_nichiyou"></td>
               <th colspan="2">バケツ</th><td colspan="4" id="r_baketsu"></td>
             </tr>
             <tr>
-              <th colspan="3">他サービス</th><td colspan="6" id="r_nenmatsu"></td>
-              <td colspan="5" id="r_nenshi"></td><td colspan="6" id="r_kasan1"></td>
+              <th colspan="3">他サービス</th><td colspan="6" class="small" id="r_nenmatsu"></td>
+              <td colspan="5" class="small" id="r_nenshi"></td><td colspan="6" class="small" id="r_kasan1"></td>
             </tr>
             <tr>
               <td colspan="14" class="ltd" id="r_kubun"></td>
@@ -882,6 +889,8 @@ function cell(id, html, fallback){
   else    { el.innerHTML = fallback || '&nbsp;'; el.classList.add('empty'); }
 }
 function txt(id, value, fallback){ cell(id, value ? esc(value) : '', fallback); }
+/* 記入した値。定型文の中に混ざっても太字で目立つようにする */
+function ink(value){ return value ? '<b class="w">' + esc(value) + '</b>' : ''; }
 
 function render(){
   txt('r_tokui',   v('tokui_no'));
@@ -923,7 +932,7 @@ function render(){
 
   txt('r_shokaishu', md(v('shokai_shu')));
   cell('r_shokainyu', (v('shokai_nyu') ? esc(md(v('shokai_nyu'))) : '')
-    + '　（　' + esc(v('shokai_bun') || '　') + '　月分）');
+    + '　（　' + (v('shokai_bun') ? ink(v('shokai_bun')) : '　') + '　月分）');
   txt('r_shaban', v('shaban'));
 
   txt('r_muryo', v('muryo'));
@@ -932,25 +941,27 @@ function render(){
   cell('r_nenshi',   '年始回収（　' + opts(v('nenshi'), ['有','無']) + '　）');
 
   const kasan = k => v(k)
-    ? Number(String(v(k)).replace(/[^\d]/g,'')||0).toLocaleString('ja-JP') : '　　';
+    ? ink(Number(String(v(k)).replace(/[^\d]/g,'')||0).toLocaleString('ja-JP')) : '　　';
   cell('r_nenmatsu', '年末加算' + opts(v('nenmatsu'), ['なし','あり'], '・')
-    + '（12月　' + esc(kasan('kasan12')) + '　円加算）');
-  cell('r_kasan1', '（1月　' + esc(kasan('kasan1')) + '　円加算）');
+    + '（12月　' + kasan('kasan12') + '　円加算）');
+  cell('r_kasan1', '（1月　' + kasan('kasan1') + '　円加算）');
 
   cell('r_kubun', opts(v('kubun'),
       ['新規','地盤','ｵｰﾅｰ変更','社名変更','書換','値上','値下','その他'], '・')
-    + '（　' + esc(v('kubun_other') || '　　　　') + '　）');
+    + '（　' + (v('kubun_other') ? ink(v('kubun_other')) : '　　　　') + '　）');
 
   const gomi = [...document.querySelectorAll('#gomiChecks input')];
+  /* 選んだ種類だけ太字。ひと目でどれに丸が付いているか分かる */
+  const gomiOne = b => b.checked
+    ? '<b class="w">☑' + esc(b.value) + '</b>' : '□' + esc(b.value);
   cell('r_gomi', 'ゴミの種類　：　'
-    + gomi.filter(b => b.value !== 'その他')
-          .map(b => (b.checked ? '☑' : '□') + esc(b.value)).join('　・　')
-    + '　・　' + (gomi[gomi.length-1].checked ? '☑' : '□')
-    + 'その他（　' + esc(v('shurui_other') || '　　　　') + '　）');
+    + gomi.filter(b => b.value !== 'その他').map(gomiOne).join('　・　')
+    + '　・　' + (gomi[gomi.length-1].checked ? '<b class="w">☑その他</b>' : '□その他')
+    + '（　' + (v('shurui_other') ? ink(v('shurui_other')) : '　　　　') + '　）');
 
-  txt('r_tasa', v('tasa'));
+  cell('r_tasa', ink(v('tasa')));
 
-  cell('r_biko', esc(join([
+  cell('r_biko', ink(join([
     v('kaishi')     ? '開始希望：' + v('kaishi') : '',
     v('keiri')      ? '経理：' + v('keiri') + (v('keiri_tel') ? '（' + v('keiri_tel') + '）' : '') : '',
     v('biko')       ? '要望：' + v('biko') : '',
