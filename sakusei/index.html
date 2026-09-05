@@ -129,6 +129,8 @@
   .doc .reg td.ltd{text-align:left; font-weight:400; font-size:13.5px; line-height:1.2; padding-left:2mm}
   /* 定型の文言が長い枠は、枠に収まる大きさにしておく */
   .doc .reg td.small{font-size:13px}
+  /* 年始回収と（1月 ○円加算）は、年末加算と同じくひと続きの枠に見せる */
+  .doc .reg td.joinr{border-right:0}
   /* 記入した値だけ太字で大きく。定型文と見分けがつくように */
   .doc .reg .w{font-weight:700; font-size:18px}
   .doc .reg td.ltd .w,.doc .reg td.small .w{font-size:16px}
@@ -379,9 +381,9 @@
             <label class="f"><span class="lab">区分</span>
               <select id="kubun">
                 <option value=""></option>
-                <option>新規</option><option>地盤</option><option>ｵｰﾅｰ変更</option>
-                <option>社名変更</option><option>書換</option><option>値上</option>
-                <option>値下</option><option>その他</option>
+                <option>新規</option><option>社名変更</option><option>地盤</option>
+                <option>書換</option><option>値上</option><option>値下</option>
+                <option>ｵｰﾅｰ変更</option><option>その他</option>
               </select>
             </label>
             <label class="f"><span class="lab">その他内容</span><input id="kubun_other"></label>
@@ -686,7 +688,7 @@
             </tr>
             <tr>
               <th colspan="3">他サービス</th><td colspan="7" class="small" id="r_nenmatsu"></td>
-              <td colspan="5" class="small" id="r_nenshi"></td><td colspan="5" class="small" id="r_kasan1"></td>
+              <td colspan="5" class="small joinr" id="r_nenshi"></td><td colspan="5" class="small" id="r_kasan1"></td>
             </tr>
             <tr>
               <td colspan="14" class="ltd" id="r_kubun"></td>
@@ -949,9 +951,14 @@ function render(){
     + '（12月　' + kasan('kasan12') + '　円加算）');
   cell('r_kasan1', '（1月　' + kasan('kasan1') + '　円加算）');
 
-  cell('r_kubun', opts(v('kubun'),
-      ['新規','地盤','ｵｰﾅｰ変更','社名変更','書換','値上','値下','その他'], '・')
-    + '（　' + (v('kubun_other') ? ink(v('kubun_other')) : '　　　　') + '　）');
+  /* 区分を選んであれば、そのひとつだけを大きく出す。
+     選んでいなければ今までどおり一覧を出して、手書きで丸を付けられるようにする */
+  const KUBUN = ['新規','社名変更','地盤','書換','値上','値下','ｵｰﾅｰ変更','その他'];
+  cell('r_kubun', v('kubun')
+    ? '区分：' + ink(v('kubun'))
+        + (v('kubun_other') ? '（' + ink(v('kubun_other')) + '）' : '')
+    : opts('', KUBUN, '・')
+        + '（　' + (v('kubun_other') ? ink(v('kubun_other')) : '　　　　') + '　）');
 
   const gomi = [...document.querySelectorAll('#gomiChecks input')];
   /* 選んだ種類だけ太字。ひと目でどれに丸が付いているか分かる */
