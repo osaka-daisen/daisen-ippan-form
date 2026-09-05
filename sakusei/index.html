@@ -131,8 +131,9 @@
   .doc .reg td.small{font-size:13px}
   /* 年始回収と（1月 ○円加算）は、年末加算と同じくひと続きの枠に見せる */
   .doc .reg td.joinr{border-right:0}
+  .doc .reg td.joinl{border-left:0}
   /* かたまりの切れ目を太い黒線に。現場／請求先／支払方法／収集条件を見分けやすく */
-  .doc .reg tr.sep>th,.doc .reg tr.sep>td{border-top:2.5px solid #000}
+  .doc .reg tr.sep>th,.doc .reg tr.sep>td{border-top:4px solid #000}
   /* 記入した値だけ太字で大きく。定型文と見分けがつくように */
   .doc .reg .w{font-weight:700; font-size:18px}
   .doc .reg td.ltd .w,.doc .reg td.small .w{font-size:16px}
@@ -690,7 +691,7 @@
             </tr>
             <tr>
               <th colspan="3">他サービス</th><td colspan="7" class="small" id="r_nenmatsu"></td>
-              <td colspan="5" class="small joinr" id="r_nenshi"></td><td colspan="5" class="small" id="r_kasan1"></td>
+              <td colspan="5" class="small joinr" id="r_nenshi"></td><td colspan="5" class="small joinl" id="r_kasan1"></td>
             </tr>
             <tr>
               <td colspan="14" class="ltd" id="r_kubun"></td>
