@@ -910,6 +910,24 @@ function cell(id, html, fallback){
   else    { el.innerHTML = fallback || '&nbsp;'; el.classList.add('empty'); }
 }
 function txt(id, value, fallback){ cell(id, value ? esc(value) : '', fallback); }
+
+/* 電話番号は、数字だけで入力されると表計算に「数値」として保存され、
+   先頭の0が消えてしまう。読み込んだときにここで戻す。
+   例）8012345678 → 08012345678 ／ 664508488 → 0664508488   */
+const TEL_IDS = ['h_tel','j_tel','s_tel','tanto_tel','keiri_tel','k_tel'];
+function fixTel(value){
+  const t = String(value == null ? '' : value).trim();
+  if(!/^[0-9]+$/.test(t)) return t;                 // ハイフン入りなどはそのまま
+  if(t.charAt(0) === '0') return t;                 // すでに0から始まるならそのまま
+  if(t.length === 9 || t.length === 10) return '0' + t;
+  return t;
+}
+function fixTels(){
+  TEL_IDS.forEach(function(id){
+    const e = $(id);
+    if(e && e.value) e.value = fixTel(e.value);
+  });
+}
 /* 記入した値。定型文の中に混ざっても太字で目立つようにする */
 function ink(value){ return value ? '<b class="w">' + esc(value) + '</b>' : ''; }
 
@@ -922,12 +940,12 @@ function render(){
   txt('r_jname', v('j_name'));
   txt('r_jaddr', v('j_addr'));
   txt('r_jbldg', v('j_bldg'));
-  txt('r_jtel',  v('j_tel'));
+  txt('r_jtel',  fixTel(v('j_tel')));
 
   txt('r_sname', v('s_name'), v('h_name') ? esc('同上') : '&nbsp;');
   txt('r_saddr', v('s_addr'), v('h_addr') ? esc('同上') : '&nbsp;');
   txt('r_sbldg', v('s_bldg'));
-  txt('r_stel',  v('s_tel'),  v('h_tel')  ? esc('同上') : '&nbsp;');
+  txt('r_stel',  fixTel(v('s_tel')), v('h_tel') ? esc('同上') : '&nbsp;');
 
   cell('r_gaku', (v('keiyaku_gaku')
       ? esc(Number(String(v('keiyaku_gaku')).replace(/[^\d]/g,'')||0).toLocaleString('ja-JP'))
@@ -1408,6 +1426,7 @@ function restore(){
   let o; try{ o = JSON.parse(localStorage.getItem(STORE)||'null'); }catch(e){ return; }
   if(!o) return;
   INPUTS.forEach(id => { if(o[id]!=null && $(id)) $(id).value = o[id]; });
+  fixTels();
   if(Array.isArray(o._gomi)){
     [...document.querySelectorAll('#gomiChecks input')].forEach((b,i)=>{
       if(o._gomi[i]!=null) b.checked = o._gomi[i];
@@ -1445,6 +1464,7 @@ async function loadRecord(id){
     if(!j.ok){ msg('読み込めませんでした：' + (j.error || '不明なエラー'), 'ng'); return; }
     const d = j.data || {};
     CUST.forEach(k => { if(d[k] && $(k)) $(k).value = d[k]; });
+    fixTels();
     // お客様の希望をシステムの語彙に読み替えて、支払方法をあらかじめ入れておく
     if(!v('shiharai_hoho') && PAY_MAP[d.shiharai]) $('shiharai_hoho').value = PAY_MAP[d.shiharai];
     // 請求先が空欄で届いた案件は「ご契約者と同じ」の意味なので入れておく
@@ -1586,6 +1606,7 @@ function histRestore(i){
   if(!confirm('いま入力している内容を、この履歴（' + h.t + '／' + (h.h_name || '無題') + '）で上書きします。よろしいですか？')) return;
   const o = h.data;
   INPUTS.forEach(id => { if($(id)) $(id).value = o[id] != null ? o[id] : ''; });
+  fixTels();
   [['#gomiChecks input','_gomi'],['#hindoDays input','_days'],['#skKinds input','_sk']].forEach(function(p){
     if(!Array.isArray(o[p[1]])) return;
     [...document.querySelectorAll(p[0])].forEach(function(b, n){
@@ -1679,6 +1700,7 @@ function loadDemo(){
     biko:'現在は他社と契約中で、8月末で解約予定です。9月1日から切り替えでお願いします。'
   };
   CUST.forEach(k => { if(d[k] && $(k)) $(k).value = d[k]; });
+  fixTels();
   if(!v('shiharai_hoho') && PAY_MAP[d.shiharai]) $('shiharai_hoho').value = PAY_MAP[d.shiharai];
   render();
   msg('見本のお客様データを入れました。金額・〆日・車番などをご記入のうえ、'
