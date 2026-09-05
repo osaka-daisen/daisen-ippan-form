@@ -144,11 +144,13 @@
   .doc .reg .tall{height:auto}
   .doc .empty{color:#bbb; font-weight:400; font-size:14px}
   /* 選んだものを青い丸で囲む（実物と同じ） */
+  /* 選んだものは黒い太丸＋太字。白黒コピーでもはっきり残る太さにしている */
   .doc .on{
-    display:inline-block; border:1.3px solid #1f3864; border-radius:50%;
-    padding:0 1.6mm; color:#000; font-weight:700;
+    display:inline-block; border:2.2px solid #000; border-radius:50%;
+    padding:0 1.7mm; color:#000; font-weight:700;
   }
-  .doc .off{color:#000}
+  /* 選んでいない側は薄く。どちらを選んだか一目で分かる */
+  .doc .off{color:#9a9a9a; font-weight:400}
 
   /* A5横（A4を横半分に切った 210×148）＝紙の控えと同じ大きさ。
      半分をめいっぱい使うよう、余白を詰めて行を高くしている */
