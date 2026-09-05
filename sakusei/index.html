@@ -72,6 +72,7 @@
   .checks label:has(input:checked){background:var(--chip); border-color:var(--accent); font-weight:700; color:var(--accent-d)}
   .checks input{width:auto; margin:0; flex:none; accent-color:var(--accent)}
   .checks.days{grid-template-columns:repeat(7,minmax(0,1fr)); gap:4px}
+  .kubunbox .lab{display:block; font-size:11.5px; color:var(--sub); font-weight:700; margin-bottom:3px}
   .checks.days label{justify-content:center; padding:7px 2px}
 
   .btnrow{display:flex; flex-wrap:wrap; gap:8px}
@@ -387,14 +388,21 @@
                 <option>13</option><option>14</option>
               </select>
             </label>
-            <label class="f"><span class="lab">区分</span>
-              <select id="kubun">
-                <option value=""></option>
-                <option>新規</option><option>社名変更</option><option>地盤</option>
-                <option>書換</option><option>値上</option><option>値下</option>
-                <option>ｵｰﾅｰ変更</option><option>その他</option>
-              </select>
-            </label>
+            <div class="f full kubunbox"><span class="lab">区分（押したものがシートに出ます）</span>
+              <div class="checks" id="kubunChoices">
+                <label><input type="radio" name="kubunR" value="新規">新規</label>
+                <label><input type="radio" name="kubunR" value="社名変更">社名変更</label>
+                <label><input type="radio" name="kubunR" value="地盤">地盤</label>
+                <label><input type="radio" name="kubunR" value="書換">書換</label>
+                <label><input type="radio" name="kubunR" value="値上">値上</label>
+                <label><input type="radio" name="kubunR" value="値下">値下</label>
+                <label><input type="radio" name="kubunR" value="ｵｰﾅｰ変更">ｵｰﾅｰ変更</label>
+                <label><input type="radio" name="kubunR" value="その他">その他</label>
+                <label><input type="radio" name="kubunR" value="">選ばない</label>
+              </div>
+              <input type="hidden" id="kubun">
+              <div class="hint">「選ばない」にすると、今までどおり一覧が出ます（手書きで丸を付けたいとき）</div>
+            </div>
             <label class="f"><span class="lab">その他内容</span><input id="kubun_other"></label>
           </div>
         </fieldset>
@@ -959,6 +967,9 @@ function render(){
     + '（12月　' + kasan('kasan12') + '　円加算）');
   cell('r_kasan1', '（1月　' + kasan('kasan1') + '　円加算）');
 
+  document.querySelectorAll('#kubunChoices input').forEach(function(b){
+    b.checked = (b.value === (v('kubun') || ''));
+  });
   /* 区分を選んであれば、そのひとつだけを大きく出す。
      選んでいなければ今までどおり一覧を出して、手書きで丸を付けられるようにする */
   const KUBUN = ['新規','社名変更','地盤','書換','値上','値下','ｵｰﾅｰ変更','その他'];
@@ -1368,6 +1379,10 @@ $('btnAllDays').addEventListener('click', function(){
 $('btnWeekdays').addEventListener('click', function(){
   document.querySelectorAll('#hindoDays input').forEach(function(b,i){ b.checked = i < 6; });
   buildHindo();
+});
+
+document.querySelectorAll('#kubunChoices input').forEach(function(b){
+  b.addEventListener('change', function(){ $('kubun').value = b.value; render(); });
 });
 
 [['.shurui-p','k_shurui'],
