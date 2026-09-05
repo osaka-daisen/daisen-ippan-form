@@ -131,6 +131,8 @@
   .doc .reg td.small{font-size:13px}
   /* 年始回収と（1月 ○円加算）は、年末加算と同じくひと続きの枠に見せる */
   .doc .reg td.joinr{border-right:0}
+  /* かたまりの切れ目を太い黒線に。現場／請求先／支払方法／収集条件を見分けやすく */
+  .doc .reg tr.sep>th,.doc .reg tr.sep>td{border-top:2.5px solid #000}
   /* 記入した値だけ太字で大きく。定型文と見分けがつくように */
   .doc .reg .w{font-weight:700; font-size:18px}
   .doc .reg td.ltd .w,.doc .reg td.small .w{font-size:16px}
@@ -649,7 +651,7 @@
           </div>
           <table class="reg">
             <colgroup><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col></colgroup>
-            <tr>
+            <tr class="sep">
               <th colspan="3">現場名</th><td colspan="8" id="r_jname"></td>
               <th colspan="2">契約担当名</th><td colspan="7" id="r_ktanto"></td>
             </tr>
@@ -658,7 +660,7 @@
               <th colspan="3">ﾋﾞﾙ・ﾏﾝｼｮﾝ名</th><td colspan="6" id="r_jbldg"></td>
               <th colspan="2">TEL</th><td colspan="9" id="r_jtel"></td>
             </tr>
-            <tr>
+            <tr class="sep">
               <th colspan="3">請求先名</th><td colspan="6" id="r_sname"></td>
               <th colspan="2">契約額</th><td colspan="9" id="r_gaku"></td>
             </tr>
@@ -672,11 +674,11 @@
               <th colspan="2">役職等</th><td colspan="3" id="r_yaku"></td>
               <th colspan="3">業種別番号</th><td colspan="4" id="r_gyono"></td>
             </tr>
-            <tr><th colspan="3" rowspan="3" class="tall">支払方法</th>
+            <tr class="sep"><th colspan="3" rowspan="3" class="tall">支払方法</th>
                 <td colspan="17" id="r_pay1"></td></tr>
             <tr><td colspan="17" class="small" id="r_pay2"></td></tr>
             <tr><td colspan="17" id="r_pay3"></td></tr>
-            <tr>
+            <tr class="sep">
               <th colspan="3">初回収集日</th><td colspan="3" id="r_shokaishu"></td>
               <th colspan="2">初回入金日</th><td colspan="5" id="r_shokainyu"></td>
               <th colspan="2">車　番</th><td colspan="5" id="r_shaban"></td>
